@@ -2,11 +2,11 @@
 This file serves as the living memory of the Vicharanashala FAQ Platform project. It is updated after every task completion, bug fix, or significant decision.
 
 ## Current Project State
-- **Task 8: Admin Authentication Flow (Frontend)** is **COMPLETED**.
-- Implemented the `AdminLogin` component with form state, loading indicators, and error handling.
-- Successfully connected to `/api/auth/login` using Axios.
-- Integrated Zustand to hold user state and securely persist sessions via HTTP-only cookies.
-- Automatically redirects admins to the protected `/admin` route on success.
+- **Task 9: Admin Dashboard & Management** is **COMPLETED**.
+- Built the `AdminDashboard` page with live metrics (`totalFaqs`, `pendingQuestions`, `totalVotes`).
+- Implemented a clean glassmorphism table to list all FAQs including Draft/Published status.
+- Built `FAQModal` for Admins to easily Create and Edit FAQs, resolving immediately back to the table.
+- Connected all CRUD actions via Axios to backend API.
 
 ## Completed Tasks
 - **Task 1:** Project Scaffolding
@@ -17,9 +17,10 @@ This file serves as the living memory of the Vicharanashala FAQ Platform project
 - **Task 6:** Frontend Routing & Layout
 - **Task 7:** Fetch & Display FAQs (Frontend)
 - **Task 8:** Admin Authentication Flow (Frontend)
+- **Task 9:** Admin Dashboard & Management (Frontend)
 
 ## Next Task
-- **Task 9: Admin Dashboard & Management**
-  - Fetch statistics, FAQs, and submitted questions.
-  - Build table/grid UI for managing FAQs.
-  - Integrate Create, Update, Delete API calls for FAQs.
+- **Task 10: Submitted Questions Queue & Final Polish**
+  - Public submission form for asking new questions.
+  - Admin view to review, edit, approve, or reject submitted questions.
+  - Final project review.

@@ -41,14 +41,30 @@ const seedData = async () => {
     console.log(`Admin user created: ${adminEmail}`);
 
     // 3. Seed FAQs
-    const faqsFilePath = path.join(__dirname, '..', 'data', 'faqs.json');
-    if (fs.existsSync(faqsFilePath)) {
-      const faqsData = JSON.parse(fs.readFileSync(faqsFilePath, 'utf-8'));
-      await FAQ.insertMany(faqsData);
-      console.log(`${faqsData.length} FAQs seeded successfully`);
-    } else {
-      console.log('faqs.json not found! Please run the scraper first.');
-    }
+    const { customFaqs } = await import('../data/hardcodedFaqs');
+    
+    // Map custom categories to section numbers
+    const categoryMap: { [key: string]: number } = {};
+    let currentNumber = 1;
+
+    const formattedFaqs = customFaqs.map(faq => {
+      if (!categoryMap[faq.category]) {
+        categoryMap[faq.category] = currentNumber++;
+      }
+      
+      return {
+        section: faq.category,
+        sectionNumber: categoryMap[faq.category],
+        question: faq.question,
+        answer: faq.answer,
+        slug: faq.question.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+        isPublished: true,
+        tags: []
+      };
+    });
+
+    await FAQ.insertMany(formattedFaqs);
+    console.log(`${formattedFaqs.length} FAQs seeded successfully`);
 
     console.log('Data Seeding Complete!');
     process.exit();

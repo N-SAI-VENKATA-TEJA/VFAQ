@@ -108,6 +108,47 @@ const FAQPage = () => {
           )}
         </div>
       )}
+
+      {/* Ask a Question Form */}
+      <div className="mt-16 p-8 rounded-3xl bg-gradient-to-br from-white/60 to-white/30 backdrop-blur-xl border border-white/80 shadow-xl shadow-sky-100/50">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Can't find your answer?</h2>
+        <p className="text-gray-600 mb-6">Submit a question and our team will answer it!</p>
+        
+        <form 
+          className="space-y-4"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const input = form.elements.namedItem('question') as HTMLInputElement;
+            if (!input.value.trim()) return;
+            
+            try {
+              await api.post('/questions/submit', { question: input.value });
+              alert('Question submitted successfully! It is now pending review.');
+              input.value = '';
+            } catch (error) {
+              console.error('Error submitting question', error);
+              alert('Failed to submit question.');
+            }
+          }}
+        >
+          <div className="flex gap-4">
+            <input 
+              type="text" 
+              name="question"
+              required
+              placeholder="Type your question here..."
+              className="flex-1 px-5 py-3 rounded-xl bg-white/60 border border-white/80 focus:border-sky-400 focus:ring-4 focus:ring-sky-100 outline-none transition-all text-gray-800"
+            />
+            <button 
+              type="submit"
+              className="px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold shadow-lg shadow-sky-200 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

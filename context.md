@@ -2,11 +2,11 @@
 This file serves as the living memory of the Vicharanashala FAQ Platform project. It is updated after every task completion, bug fix, or significant decision.
 
 ## Current Project State
-- **Task 9: Admin Dashboard & Management** is **COMPLETED**.
-- Built the `AdminDashboard` page with live metrics (`totalFaqs`, `pendingQuestions`, `totalVotes`).
-- Implemented a clean glassmorphism table to list all FAQs including Draft/Published status.
-- Built `FAQModal` for Admins to easily Create and Edit FAQs, resolving immediately back to the table.
-- Connected all CRUD actions via Axios to backend API.
+- **Task 10: Submitted Questions Queue & Final Polish** is **COMPLETED**.
+- Added a public submission form on the FAQ Page for users to submit new questions.
+- Updated `AdminDashboard` to list pending questions fetched from the backend.
+- Admins can now instantly Approve (opening the FAQ Modal) or Reject questions.
+- **The entire 10-Task roadmap is complete!** The platform features a beautifully designed glassmorphism frontend and a robust Express/MongoDB backend, seeded with real Vicharanashala data.
 
 ## Completed Tasks
 - **Task 1:** Project Scaffolding
@@ -18,9 +18,4 @@ This file serves as the living memory of the Vicharanashala FAQ Platform project
 - **Task 7:** Fetch & Display FAQs (Frontend)
 - **Task 8:** Admin Authentication Flow (Frontend)
 - **Task 9:** Admin Dashboard & Management (Frontend)
-
-## Next Task
-- **Task 10: Submitted Questions Queue & Final Polish**
-  - Public submission form for asking new questions.
-  - Admin view to review, edit, approve, or reject submitted questions.
-  - Final project review.
+- **Task 10:** Submitted Questions Queue & Final Polish

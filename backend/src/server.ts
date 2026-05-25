@@ -3,6 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes';
+import faqRoutes from './routes/faqRoutes';
+import questionRoutes from './routes/questionRoutes';
+import adminRoutes from './routes/adminRoutes';
 import { connectDB } from './config/db';
 
 dotenv.config();
@@ -22,6 +25,9 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/faqs', faqRoutes);
+app.use('/api/questions', questionRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'success', message: 'Backend is running' });

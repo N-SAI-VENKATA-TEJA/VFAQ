@@ -1,0 +1,103 @@
+### PUBLIC ROUTES
+
+### Get all FAQs
+GET http://localhost:5000/api/faqs
+Content-Type: application/json
+
+###
+
+### Search FAQs
+GET http://localhost:5000/api/faqs?search=stipend
+Content-Type: application/json
+
+###
+
+### Get single FAQ by slug (and increment viewCount)
+GET http://localhost:5000/api/faqs/what-is-vicharanashala
+Content-Type: application/json
+
+###
+
+### Vote on FAQ (Replace :id with real FAQ _id)
+POST http://localhost:5000/api/faqs/:id/vote
+Content-Type: application/json
+
+{
+  "voteType": "helpful"
+}
+
+###
+
+### Submit a public question
+POST http://localhost:5000/api/questions/submit
+Content-Type: application/json
+
+{
+  "question": "When will the next batch start?",
+  "category": "Timing",
+  "submitterName": "Sai Teja",
+  "submitterEmail": "sai@example.com"
+}
+
+
+### ----------------------------------------------------
+### ADMIN ROUTES (Requires Admin Auth Cookie/Bearer Token)
+### ----------------------------------------------------
+
+### Get all FAQs (including unpublished and deleted)
+GET http://localhost:5000/api/admin/faqs
+Content-Type: application/json
+
+###
+
+### Create an FAQ
+POST http://localhost:5000/api/admin/faqs
+Content-Type: application/json
+
+{
+  "section": "About",
+  "sectionNumber": 1,
+  "question": "What is Vicharanashala?",
+  "answer": "It is a crowd-sourced learning and internship platform.",
+  "tags": ["about", "intro"],
+  "isPublished": true
+}
+
+###
+
+### Edit an FAQ (Replace :id with real FAQ _id)
+PUT http://localhost:5000/api/admin/faqs/:id
+Content-Type: application/json
+
+{
+  "answer": "It is an updated learning and internship platform."
+}
+
+###
+
+### Soft delete an FAQ (Replace :id with real FAQ _id)
+DELETE http://localhost:5000/api/admin/faqs/:id
+Content-Type: application/json
+
+###
+
+### Get all submitted questions queue
+GET http://localhost:5000/api/admin/questions
+Content-Type: application/json
+
+###
+
+### Update/Approve a submitted question (Replace :id with real Question _id)
+PATCH http://localhost:5000/api/admin/questions/:id
+Content-Type: application/json
+
+{
+  "status": "approved",
+  "aiGeneratedAnswer": "The next batch will start in July."
+}
+
+###
+
+### Get dashboard stats
+GET http://localhost:5000/api/admin/stats
+Content-Type: application/json

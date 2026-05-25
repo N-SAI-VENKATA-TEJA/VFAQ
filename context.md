@@ -2,11 +2,11 @@
 This file serves as the living memory of the Vicharanashala FAQ Platform project. It is updated after every task completion, bug fix, or significant decision.
 
 ## Current Project State
-- **Task 6: Frontend Routing & Layout** is **COMPLETED**.
-- Configured React Router in `App.tsx` with routes for Home, FAQs, Login, and a protected Admin Dashboard.
-- Built a global glassmorphism layout (`Layout`, `Navbar`, `Footer`) utilizing the specified pastel/light palette.
-- Set up global state using Zustand (`authStore.ts`).
-- Basic page stubs are rendering properly.
+- **Task 7: Fetch & Display FAQs** is **COMPLETED**.
+- Created frontend `axios` API service.
+- Designed an elegant, glassmorphism `Accordion` component for FAQ items.
+- Implemented client-side search and grouping logic by `sectionNumber`.
+- The `FAQPage` successfully fetches real data from the backend and displays the 127 seeded FAQs cleanly.
 
 ## Completed Tasks
 - **Task 1:** Project Scaffolding
@@ -15,9 +15,9 @@ This file serves as the living memory of the Vicharanashala FAQ Platform project
 - **Task 4:** FAQ Models & CRUD API (Backend)
 - **Task 5:** Seed the Database (Backend)
 - **Task 6:** Frontend Routing & Layout
+- **Task 7:** Fetch & Display FAQs (Frontend)
 
 ## Next Task
-- **Task 7: Fetch & Display FAQs (Frontend)**
-  - Integrate Axios.
-  - Fetch FAQs from `/api/faqs`.
-  - Display them with Sections and expandable details.
+- **Task 8: Admin Authentication Flow (Frontend)**
+  - Implement Admin Login logic utilizing Axios and Zustand.
+  - Test protected route access (AdminDashboard).

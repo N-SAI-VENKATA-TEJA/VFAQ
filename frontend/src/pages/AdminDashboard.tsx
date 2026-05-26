@@ -142,6 +142,17 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteAQ = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this AQ?')) return;
+    try {
+      await api.delete(`/aqs/${id}`);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete AQ', error);
+      alert('Error deleting AQ');
+    }
+  };
+
   return (
     <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-12">
       <div className="flex justify-between items-center mb-8">
@@ -283,7 +294,7 @@ const AdminDashboard = () => {
           <table className="w-full text-left border-collapse">
             <thead className="sticky top-0 bg-white/80 backdrop-blur-md z-10">
               <tr className="border-b border-gray-300/50 text-gray-500 text-sm">
-                <th className="py-4 font-semibold px-4">Asked</th>
+                <th className="py-4 font-semibold px-4 w-24">Sec</th>
                 <th className="py-4 font-semibold px-4">Question</th>
                 <th className="py-4 font-semibold px-4 text-right">Actions</th>
               </tr>
@@ -295,19 +306,25 @@ const AdminDashboard = () => {
                 </tr>
               ) : aqs.map((aq) => (
                 <tr key={aq._id} className="hover:bg-white/50 transition-colors group">
-                  <td className="py-4 px-4 text-center font-bold text-sky-600">
-                    {aq.askedCount || 1}
+                  <td className="py-4 px-4 font-medium text-gray-600">
+                    {aq.sectionNumber}
                   </td>
                   <td className="py-4 px-4">
                     <p className="text-gray-900 font-medium line-clamp-1">{aq.question}</p>
                     <p className="text-gray-500 text-xs line-clamp-1 mt-1">{aq.section}</p>
                   </td>
-                  <td className="py-4 px-4 text-right">
+                  <td className="py-4 px-4 text-right space-x-2 whitespace-nowrap">
                     <button 
                       onClick={() => handlePromoteAQ(aq._id)}
-                      className="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider transition-colors border border-indigo-200"
+                      className="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider transition-colors border border-indigo-200 inline-flex items-center gap-1"
                     >
-                      Promote to FAQ
+                      <Check className="w-3.5 h-3.5" /> Promote
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteAQ(aq._id)}
+                      className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold uppercase tracking-wider transition-colors border border-rose-200 inline-flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" /> Delete
                     </button>
                   </td>
                 </tr>

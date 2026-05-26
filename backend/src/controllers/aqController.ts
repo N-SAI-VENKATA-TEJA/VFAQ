@@ -161,3 +161,21 @@ export const promoteToFAQ = async (req: Request, res: Response): Promise<void> =
     res.status(500).json({ message: error.message });
   }
 };
+
+// ADMIN ONLY: DELETE /api/aqs/:id
+export const deleteAQ = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const aq = await AQ.findById(id);
+    
+    if (!aq) {
+      res.status(404).json({ message: 'AQ not found' });
+      return;
+    }
+
+    await aq.deleteOne();
+    res.json({ message: 'AQ deleted successfully' });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};

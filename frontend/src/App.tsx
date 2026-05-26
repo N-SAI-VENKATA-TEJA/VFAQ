@@ -32,9 +32,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Layout><AuthPage /></Layout>} />
-        
         <Route path="/" element={<Layout />}>
+          <Route path="login" element={<AuthPage />} />
+          
           <Route 
             index 
             element={

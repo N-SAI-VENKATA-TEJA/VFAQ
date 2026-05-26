@@ -100,7 +100,7 @@ const FAQPage = () => {
                 </h2>
                 <div className="space-y-4">
                   {sectionFaqs.map((faq) => (
-                    <Accordion key={faq._id} question={faq.question} answer={faq.answer} />
+                    <Accordion key={faq._id} faq={faq} />
                   ))}
                 </div>
               </div>

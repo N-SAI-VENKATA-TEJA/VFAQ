@@ -2,6 +2,21 @@ import { Request, Response } from 'express';
 import { FAQ } from '../models/FAQ';
 import { Vote } from '../models/Vote';
 
+// POST /api/faqs/:id/view
+export const viewFaq = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const faq = await FAQ.findByIdAndUpdate(id, { $inc: { viewCount: 1 } }, { new: true });
+    if (!faq) {
+      res.status(404).json({ message: 'FAQ not found' });
+      return;
+    }
+    res.json({ message: 'View recorded', viewCount: faq.viewCount });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // GET /api/faqs
 export const getFaqs = async (req: Request, res: Response): Promise<void> => {
   try {

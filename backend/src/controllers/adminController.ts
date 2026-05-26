@@ -69,7 +69,7 @@ export const deleteFaq = async (req: Request, res: Response): Promise<void> => {
 export const getSubmittedQuestions = async (req: Request, res: Response): Promise<void> => {
   try {
     const { status } = req.query;
-    const query = status ? { status } : {};
+    const query = status ? { status: status as 'pending' | 'approved' | 'rejected' } : {};
     const questions = await SubmittedQuestion.find(query).sort({ createdAt: -1 });
     res.json(questions);
   } catch (error: any) {

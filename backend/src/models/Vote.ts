@@ -1,22 +1,24 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IVote extends Document {
-  faqId: mongoose.Types.ObjectId;
+  targetId: mongoose.Types.ObjectId;
+  targetType: 'FAQ' | 'AQ';
   userIdOrIpHash: string;
-  voteType: 'helpful' | 'unhelpful';
+  voteType: 'helpful' | 'unhelpful' | 'ask';
   createdAt: Date;
 }
 
 const voteSchema = new Schema<IVote>(
   {
-    faqId: { type: Schema.Types.ObjectId, ref: 'FAQ', required: true },
+    targetId: { type: Schema.Types.ObjectId, required: true, refPath: 'targetType' },
+    targetType: { type: String, enum: ['FAQ', 'AQ'], required: true, default: 'FAQ' },
     userIdOrIpHash: { type: String, required: true },
-    voteType: { type: String, enum: ['helpful', 'unhelpful'], required: true },
+    voteType: { type: String, enum: ['helpful', 'unhelpful', 'ask'], required: true },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-// Optional index to ensure a user/IP only votes once per FAQ
-voteSchema.index({ faqId: 1, userIdOrIpHash: 1 }, { unique: true });
+// Optional index to ensure a user/IP only votes once per target
+voteSchema.index({ targetId: 1, targetType: 1, userIdOrIpHash: 1 }, { unique: true });
 
 export const Vote = mongoose.model<IVote>('Vote', voteSchema);

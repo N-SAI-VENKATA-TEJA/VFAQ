@@ -77,7 +77,7 @@ export const voteAQ = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Check if vote already exists for this user/ip + faq
-    const existingVote = await Vote.findOne({ targetId: id, targetType: 'AQ', userId });
+    const existingVote = await Vote.findOne({ targetId: id, targetType: 'AQ', userIdOrIpHash: userId as string });
 
     if (existingVote) {
       // Reversing a vote
@@ -109,11 +109,10 @@ export const voteAQ = async (req: Request, res: Response): Promise<void> => {
       }
     }
 
-    // New vote
     await Vote.create({
-      targetId: id,
+      targetId: id as string,
       targetType: 'AQ',
-      userId,
+      userIdOrIpHash: userId as string,
       voteType
     });
 

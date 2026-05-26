@@ -41,7 +41,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (user) {
-      const { accessToken, refreshToken } = generateTokens(user._id as string, user.role);
+      const { accessToken, refreshToken } = generateTokens(user._id.toString(), user.role);
       setCookies(res, accessToken, refreshToken);
 
       res.status(201).json({
@@ -65,7 +65,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const user = await User.findOne({ email }).select('+password');
 
     if (user && (await bcrypt.compare(password, user.password as string))) {
-      const { accessToken, refreshToken } = generateTokens(user._id as string, user.role);
+      const { accessToken, refreshToken } = generateTokens(user._id.toString(), user.role);
       setCookies(res, accessToken, refreshToken);
 
       res.json({
@@ -99,7 +99,7 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const tokens = generateTokens(user._id as string, user.role);
+    const tokens = generateTokens(user._id.toString(), user.role);
     setCookies(res, tokens.accessToken, tokens.refreshToken);
 
     res.json({ message: 'Tokens refreshed successfully' });

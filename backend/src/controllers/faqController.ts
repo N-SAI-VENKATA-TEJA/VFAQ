@@ -73,7 +73,8 @@ export const voteFaq = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const existingVote = await Vote.findOne({ faqId: id, userIdOrIpHash });
+    // Check if vote already exists for this user/ip + faq
+    const existingVote = await Vote.findOne({ targetId: id, targetType: 'FAQ', userIdOrIpHash: userIdOrIpHash as string });
     
     if (existingVote) {
       if (existingVote.voteType === voteType) {
@@ -104,7 +105,7 @@ export const voteFaq = async (req: Request, res: Response): Promise<void> => {
     }
 
     // New vote
-    await Vote.create({ faqId: id, userIdOrIpHash, voteType });
+    await Vote.create({ targetId: id as string, targetType: 'FAQ', userIdOrIpHash: userIdOrIpHash as string, voteType });
 
     if (voteType === 'helpful') {
       faq.helpfulVotes += 1;

@@ -1,6 +1,6 @@
 import express from 'express';
 import { getAQs, getAQBySlug, voteAQ, viewAQ, promoteToFAQ } from '../controllers/aqController';
-import { protect, admin } from '../middleware/authMiddleware';
+import { protect, adminMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
@@ -10,6 +10,6 @@ router.post('/:id/vote', voteAQ);
 router.post('/:id/view', viewAQ);
 
 // Admin routes for AQs
-router.post('/:id/promote', protect, admin, promoteToFAQ);
+router.post('/:id/promote', protect, adminMiddleware, promoteToFAQ);
 
 export default router;

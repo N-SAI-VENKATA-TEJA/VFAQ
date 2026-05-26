@@ -112,35 +112,8 @@ const FAQPage = () => {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"></div>
-        </div>
-      ) : (
-        <div className="space-y-12">
-          {groupedFaqs.length === 0 ? (
-            <div className="text-center py-12 bg-white/40 rounded-3xl border border-white/60">
-              <p className="text-xl text-gray-500">No FAQs found matching "{searchQuery}"</p>
-            </div>
-          ) : (
-            groupedFaqs.map(([sectionTitle, sectionFaqs]) => (
-              <div key={sectionTitle} className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 pl-2 border-l-4 border-sky-400">
-                  {sectionTitle}
-                </h2>
-                <div className="space-y-4">
-                  {sectionFaqs.map((faq) => (
-                    <Accordion key={faq._id} faq={faq} />
-                  ))}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
-
-      {/* Ask a Question Form */}
-      <div className="mt-16 p-8 rounded-3xl bg-gradient-to-br from-white/60 to-white/30 backdrop-blur-xl border border-white/80 shadow-xl shadow-sky-100/50">
+      {/* Ask a Question Form (Moved from bottom) */}
+      <div className="p-8 rounded-3xl bg-gradient-to-br from-white/60 to-white/30 backdrop-blur-xl border border-white/80 shadow-xl shadow-sky-100/50 mb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Can't find your answer?</h2>
         <p className="text-gray-600 mb-6">Submit a question and our team will answer it!</p>
         
@@ -179,6 +152,34 @@ const FAQPage = () => {
           </div>
         </form>
       </div>
+
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"></div>
+        </div>
+      ) : (
+        <div className="space-y-12">
+          {groupedFaqs.length === 0 ? (
+            <div className="text-center py-12 bg-white/40 rounded-3xl border border-white/60">
+              <p className="text-xl text-gray-500">No FAQs found matching "{searchQuery}"</p>
+            </div>
+          ) : (
+            groupedFaqs.map(([sectionTitle, sectionFaqs]) => (
+              <div key={sectionTitle} className="scroll-mt-24">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 pl-2 border-l-4 border-sky-400">
+                  {sectionTitle}
+                </h2>
+                <div className="space-y-4">
+                  {sectionFaqs.map((faq) => (
+                    <Accordion key={faq._id} faq={faq} />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
     </div>
   );
 };

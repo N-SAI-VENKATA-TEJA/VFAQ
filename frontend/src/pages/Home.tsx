@@ -33,11 +33,11 @@ const Home = () => {
           Browse FAQs
         </Link>
         <Link 
-          to="/faqs" 
+          to="/my-queries" 
           className="flex-1 inline-flex justify-center items-center gap-2 px-8 py-4 rounded-2xl bg-white/50 backdrop-blur-md border border-white/60 text-gray-800 font-semibold text-lg hover:bg-white/70 hover:-translate-y-1 transition-all duration-300"
         >
           <MessageCircleQuestion className="w-5 h-5 text-indigo-600" />
-          Ask a Question
+          My Queries
         </Link>
       </div>
     </div>

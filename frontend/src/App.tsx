@@ -4,6 +4,7 @@ import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import FAQPage from './pages/FAQPage';
 import AuthPage from './pages/AuthPage';
+import MyQueries from './pages/MyQueries';
 import AdminDashboard from './pages/AdminDashboard';
 import { useAuthStore } from './store/authStore';
 import api from './api/axios';
@@ -75,6 +76,14 @@ function App() {
             element={
               <RequireAuth>
                 <FAQPage />
+              </RequireAuth>
+            } 
+          />
+          <Route 
+            path="my-queries" 
+            element={
+              <RequireAuth>
+                <MyQueries />
               </RequireAuth>
             } 
           />

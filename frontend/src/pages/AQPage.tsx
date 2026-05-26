@@ -1,72 +1,3 @@
-import { Search } from 'lucide-react';
-import api from '../api/axios';
-import Accordion from '../components/ui/Accordion';
-import { useAuthStore } from '../store/authStore';
-
-interface AQ {
-  _id: string;
-  section: string;
-  sectionNumber: number;
-  question: string;
-  answer: string;
-  slug: string;
-}
-
-const AQPage = () => {
-  const [aqs, setAqs] = useState<AQ[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
-  const { user } = useAuthStore();
-
-  useEffect(() => {
-    const fetchAQs = async () => {
-      try {
-        const response = await api.get('/aqs');
-        setAqs(response.data);
-      } catch (error) {
-        console.error('Failed to fetch AQs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAQs();
-  }, []);
-
-  // Extract unique categories (sections) dynamically from fetched AQs
-  const categories = useMemo(() => {
-    const uniqueSections = Array.from(new Set(aqs.map(aq => aq.section)));
-    // Optional: Sort alphabetically or keep original order. Let's keep original sorting by sectionNumber if possible
-    // but the Set will preserve insertion order which might be good enough since they are fetched sorted.
-    return ['All Categories', ...uniqueSections];
-  }, [aqs]);
-
-  // Client-side filtering by Search AND Category
-  const filteredAQs = useMemo(() => {
-    return aqs.filter((aq) => {
-      const matchesSearch = !searchQuery || 
-        aq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        aq.answer?.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesCategory = selectedCategory === 'All Categories' || aq.section === selectedCategory;
-      
-      return matchesSearch && matchesCategory;
-    });
-  }, [aqs, searchQuery, selectedCategory]);
-
-  // Group by section
-  const groupedAQs = useMemo(() => {
-    const groups: { [key: string]: AQ[] } = {};
-    filteredAQs.forEach((aq) => {
-      const sectionName = `${aq.sectionNumber}. ${aq.section}`;
-      if (!groups[sectionName]) {
-        groups[sectionName] = [];
-      }
-      groups[sectionName].push(aq);
-    });
-    
-    // Sort sections by sectionNumber
-    return Object.entries(groups).sort((a, b) => {
 import { useState, useEffect, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import api from '../api/axios';
@@ -106,8 +37,6 @@ const AQPage = () => {
   // Extract unique categories (sections) dynamically from fetched AQs
   const categories = useMemo(() => {
     const uniqueSections = Array.from(new Set(aqs.map(aq => aq.section)));
-    // Optional: Sort alphabetically or keep original order. Let's keep original sorting by sectionNumber if possible
-    // but the Set will preserve insertion order which might be good enough since they are fetched sorted.
     return ['All Categories', ...uniqueSections];
   }, [aqs]);
 

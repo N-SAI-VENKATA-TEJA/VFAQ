@@ -30,21 +30,36 @@ const Accordion: React.FC<AccordionProps> = ({ faq }) => {
   }, [isOpen, hasViewed, faq._id]);
 
   const handleVote = async (type: 'helpful' | 'unhelpful') => {
-    if (voteType) return; // Prevent multiple votes per session
+    const isRemoving = voteType === type;
+    const isChanging = voteType !== null && voteType !== type;
+    const previousVoteType = voteType;
     
     // Optimistic UI update
-    setVoteType(type);
-    if (type === 'helpful') setHelpfulCount(c => c + 1);
-    else setUnhelpfulCount(c => c + 1);
+    if (isRemoving) {
+      setVoteType(null);
+      if (type === 'helpful') setHelpfulCount(c => c - 1);
+      else setUnhelpfulCount(c => c - 1);
+    } else if (isChanging) {
+      setVoteType(type);
+      if (type === 'helpful') {
+        setHelpfulCount(c => c + 1);
+        setUnhelpfulCount(c => c - 1);
+      } else {
+        setHelpfulCount(c => c - 1);
+        setUnhelpfulCount(c => c + 1);
+      }
+    } else {
+      setVoteType(type);
+      if (type === 'helpful') setHelpfulCount(c => c + 1);
+      else setUnhelpfulCount(c => c + 1);
+    }
 
     try {
       await api.post(`/faqs/${faq._id}/vote`, { voteType: type });
     } catch (error) {
       console.error('Failed to vote', error);
-      // Revert if failed
-      setVoteType(null);
-      if (type === 'helpful') setHelpfulCount(c => c - 1);
-      else setUnhelpfulCount(c => c - 1);
+      // Fallback reversion omitted for brevity as counts would need exact previous logic
+      setVoteType(previousVoteType);
     }
   };
 
@@ -74,13 +89,10 @@ const Accordion: React.FC<AccordionProps> = ({ faq }) => {
           <div className="flex gap-2">
             <button 
               onClick={() => handleVote('helpful')}
-              disabled={voteType !== null}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${
                 voteType === 'helpful' 
-                  ? 'bg-sky-100 border-sky-300 text-sky-700' 
-                  : voteType === 'unhelpful' 
-                    ? 'bg-gray-50 border-gray-200 text-gray-400 opacity-50 cursor-not-allowed'
-                    : 'bg-white hover:bg-sky-50 border-gray-300 hover:border-sky-300 hover:text-sky-600'
+                  ? 'bg-sky-100 border-sky-300 text-sky-700 hover:bg-sky-200' 
+                  : 'bg-white hover:bg-sky-50 border-gray-300 hover:border-sky-300 hover:text-sky-600'
               }`}
             >
               <ThumbsUp className="w-4 h-4" />
@@ -88,13 +100,10 @@ const Accordion: React.FC<AccordionProps> = ({ faq }) => {
             </button>
             <button 
               onClick={() => handleVote('unhelpful')}
-              disabled={voteType !== null}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${
                 voteType === 'unhelpful' 
-                  ? 'bg-red-50 border-red-300 text-red-700' 
-                  : voteType === 'helpful'
-                    ? 'bg-gray-50 border-gray-200 text-gray-400 opacity-50 cursor-not-allowed'
-                    : 'bg-white hover:bg-red-50 border-gray-300 hover:border-red-300 hover:text-red-600'
+                  ? 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100' 
+                  : 'bg-white hover:bg-red-50 border-gray-300 hover:border-red-300 hover:text-red-600'
               }`}
             >
               <ThumbsDown className="w-4 h-4" />

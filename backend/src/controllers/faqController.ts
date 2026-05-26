@@ -64,9 +64,8 @@ export const voteFaq = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const { voteType } = req.body; // 'helpful' or 'unhelpful'
 
-    // Simple IP hash fallback for guests, could be improved
-    const ip = req.ip || req.connection.remoteAddress || 'unknown';
-    const userIdOrIpHash = ip; // Ideally hash the IP with a secret
+    // We use the authenticated user's ID
+    const userIdOrIpHash = (req as any).user._id.toString();
 
     const faq = await FAQ.findById(id);
     if (!faq) {
@@ -77,11 +76,34 @@ export const voteFaq = async (req: Request, res: Response): Promise<void> => {
     const existingVote = await Vote.findOne({ faqId: id, userIdOrIpHash });
     
     if (existingVote) {
-      // User already voted, maybe allow changing vote? For now, prevent double vote.
-      res.status(400).json({ message: 'You have already voted for this FAQ' });
-      return;
+      if (existingVote.voteType === voteType) {
+        // Remove vote
+        await Vote.deleteOne({ _id: existingVote._id });
+        if (voteType === 'helpful') faq.helpfulVotes -= 1;
+        else faq.unhelpfulVotes -= 1;
+        
+        await faq.save();
+        res.json({ message: 'Vote removed', faq });
+        return;
+      } else {
+        // Change vote
+        const oldVoteType = existingVote.voteType;
+        existingVote.voteType = voteType;
+        await existingVote.save();
+        
+        if (oldVoteType === 'helpful') faq.helpfulVotes -= 1;
+        else faq.unhelpfulVotes -= 1;
+        
+        if (voteType === 'helpful') faq.helpfulVotes += 1;
+        else faq.unhelpfulVotes += 1;
+        
+        await faq.save();
+        res.json({ message: 'Vote changed', faq });
+        return;
+      }
     }
 
+    // New vote
     await Vote.create({ faqId: id, userIdOrIpHash, voteType });
 
     if (voteType === 'helpful') {

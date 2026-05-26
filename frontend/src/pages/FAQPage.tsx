@@ -16,6 +16,7 @@ const FAQPage = () => {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
 
   useEffect(() => {
     const fetchFAQs = async () => {
@@ -31,16 +32,26 @@ const FAQPage = () => {
     fetchFAQs();
   }, []);
 
-  // Client-side filtering
+  // Extract unique categories (sections) dynamically from fetched FAQs
+  const categories = useMemo(() => {
+    const uniqueSections = Array.from(new Set(faqs.map(faq => faq.section)));
+    // Optional: Sort alphabetically or keep original order. Let's keep original sorting by sectionNumber if possible
+    // but the Set will preserve insertion order which might be good enough since they are fetched sorted.
+    return ['All Categories', ...uniqueSections];
+  }, [faqs]);
+
+  // Client-side filtering by Search AND Category
   const filteredFaqs = useMemo(() => {
-    if (!searchQuery) return faqs;
-    const lowerQuery = searchQuery.toLowerCase();
-    return faqs.filter(
-      (faq) =>
-        faq.question.toLowerCase().includes(lowerQuery) ||
-        faq.answer.toLowerCase().includes(lowerQuery)
-    );
-  }, [faqs, searchQuery]);
+    return faqs.filter((faq) => {
+      const matchesSearch = !searchQuery || 
+        faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesCategory = selectedCategory === 'All Categories' || faq.section === selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    });
+  }, [faqs, searchQuery, selectedCategory]);
 
   // Group by section
   const groupedFaqs = useMemo(() => {
@@ -67,18 +78,37 @@ const FAQPage = () => {
         <h1 className="text-4xl font-extrabold text-gray-900 mb-4">Frequently Asked Questions</h1>
         <p className="text-lg text-gray-600 mb-8">Find answers to common questions about the internship.</p>
         
-        {/* Search Bar */}
-        <div className="relative max-w-2xl mx-auto">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-sky-500" />
+        {/* Search and Filter Bar */}
+        <div className="relative max-w-4xl mx-auto flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-sky-500" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-12 pr-4 py-4 rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 shadow-lg shadow-sky-100/50 focus:outline-none focus:ring-4 focus:ring-sky-200 transition-all text-gray-800 text-lg placeholder-gray-400"
+              placeholder="Search the FAQ..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-          <input
-            type="text"
-            className="block w-full pl-12 pr-4 py-4 rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 shadow-lg shadow-sky-100/50 focus:outline-none focus:ring-4 focus:ring-sky-200 transition-all text-gray-800 text-lg placeholder-gray-400"
-            placeholder="Search the FAQ — type a keyword (e.g. NOC, stipend)"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          
+          <div className="relative w-full md:w-72">
+            <select
+              className="block w-full px-4 py-4 rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 shadow-lg shadow-sky-100/50 focus:outline-none focus:ring-4 focus:ring-sky-200 transition-all text-gray-800 text-lg appearance-none cursor-pointer"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
 

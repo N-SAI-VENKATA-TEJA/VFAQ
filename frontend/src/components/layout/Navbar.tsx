@@ -25,9 +25,9 @@ const Navbar = () => {
           {/* Left Side: Navigation Links (Only if logged in) */}
           <div className="flex-1 flex items-center gap-6">
             {isAuthenticated && (
-              <>
                 <Link to="/" className="text-gray-700 hover:text-sky-600 font-medium transition-colors">Home</Link>
                 <Link to="/faqs" className="text-gray-700 hover:text-sky-600 font-medium transition-colors">FAQs</Link>
+                <Link to="/aqs" className="text-gray-700 hover:text-sky-600 font-medium transition-colors">AQs</Link>
               </>
             )}
           </div>

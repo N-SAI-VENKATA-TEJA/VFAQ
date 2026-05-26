@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { Edit, Trash2, Plus, RefreshCcw, Check, X as XIcon } from 'lucide-react';
 import FAQModal from '../components/admin/FAQModal';
+import ApproveQuestionModal from '../components/admin/ApproveQuestionModal';
 
 interface Stats {
   totalFaqs: number;
@@ -36,6 +37,8 @@ const AdminDashboard = () => {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [selectedApproveQuestion, setSelectedApproveQuestion] = useState<PendingQuestion | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -97,19 +100,24 @@ const AdminDashboard = () => {
     setIsModalOpen(true);
   };
 
-  const handleApproveQuestion = (q: PendingQuestion) => {
-    // Open create modal prefilled with the question
-    setEditingFaq({
-      _id: '',
-      section: 'General',
-      sectionNumber: 13,
-      question: q.question,
-      answer: '',
-      isPublished: true
-    });
-    setIsModalOpen(true);
-    // Mark as approved in DB
-    api.patch(`/admin/questions/${q._id}`, { status: 'approved' }).catch(console.error);
+  const handleApproveQuestion = (question: PendingQuestion) => {
+    setSelectedApproveQuestion(question);
+    setIsApproveModalOpen(true);
+  };
+
+  const submitApproveQuestion = async (id: string, data: any) => {
+    try {
+      await api.patch(`/admin/questions/${id}`, { 
+        status: 'approved',
+        ...data 
+      });
+      setIsApproveModalOpen(false);
+      setSelectedApproveQuestion(null);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to approve question', error);
+      alert('Failed to approve question');
+    }
   };
 
   const handleRejectQuestion = async (id: string) => {
@@ -314,6 +322,16 @@ const AdminDashboard = () => {
         onClose={() => setIsModalOpen(false)} 
         onSave={handleSaveFaq}
         faq={editingFaq}
+      />
+
+      <ApproveQuestionModal
+        isOpen={isApproveModalOpen}
+        onClose={() => {
+          setIsApproveModalOpen(false);
+          setSelectedApproveQuestion(null);
+        }}
+        onApprove={submitApproveQuestion}
+        question={selectedApproveQuestion}
       />
     </div>
   );

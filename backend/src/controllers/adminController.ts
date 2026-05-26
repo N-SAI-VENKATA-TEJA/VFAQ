@@ -82,7 +82,7 @@ import { AQ } from '../models/AQ';
 // PATCH /api/admin/questions/:id
 export const updateSubmittedQuestion = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { status, aiGeneratedAnswer } = req.body;
+    const { status, aiGeneratedAnswer, answer, section, sectionNumber, tags } = req.body;
     const question = await SubmittedQuestion.findById(req.params.id);
     
     if (!question) {
@@ -99,11 +99,12 @@ export const updateSubmittedQuestion = async (req: Request, res: Response): Prom
     if (status === 'approved') {
       const aqSlug = question.question.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now();
       await AQ.create({
-        section: question.category,
-        sectionNumber: 99, // default unassigned section number
+        section: section || question.category,
+        sectionNumber: sectionNumber || 99, // default unassigned section number
         question: question.question,
-        answer: question.aiGeneratedAnswer || 'Pending community or admin answer.',
+        answer: answer || question.aiGeneratedAnswer || 'Pending community or admin answer.',
         slug: aqSlug,
+        tags: tags || [],
         askedCount: 1,
         isPublished: true
       });

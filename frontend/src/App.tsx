@@ -2,12 +2,23 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import FAQPage from './pages/FAQPage';
-import AdminLogin from './pages/AdminLogin';
+import AuthPage from './pages/AuthPage';
 import AdminDashboard from './pages/AdminDashboard';
 import { useAuthStore } from './store/authStore';
 
-// Protected Route Component for Admin Dashboard
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+// Protected Route for any authenticated user
+const RequireAuth = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuthStore();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Protected Route strictly for Admins
+const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, user } = useAuthStore();
   
   if (!isAuthenticated || user?.role !== 'admin') {
@@ -21,17 +32,31 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<Layout><AuthPage /></Layout>} />
+        
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="faqs" element={<FAQPage />} />
-          <Route path="login" element={<AdminLogin />} />
-          
+          <Route 
+            index 
+            element={
+              <RequireAuth>
+                <Home />
+              </RequireAuth>
+            } 
+          />
+          <Route 
+            path="faqs" 
+            element={
+              <RequireAuth>
+                <FAQPage />
+              </RequireAuth>
+            } 
+          />
           <Route 
             path="admin" 
             element={
-              <ProtectedRoute>
+              <RequireAdmin>
                 <AdminDashboard />
-              </ProtectedRoute>
+              </RequireAdmin>
             } 
           />
         </Route>

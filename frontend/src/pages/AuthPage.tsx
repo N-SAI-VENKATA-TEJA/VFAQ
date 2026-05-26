@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
 
-const AdminLogin = () => {
+const AuthPage = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,17 +14,23 @@ const AdminLogin = () => {
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/login', { email, password });
-      login(response.data);
-      navigate('/admin');
+      if (isLogin) {
+        const response = await api.post('/auth/login', { email, password });
+        login(response.data);
+        navigate('/');
+      } else {
+        const response = await api.post('/auth/register', { name, email, password });
+        login(response.data);
+        navigate('/');
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || 'Authentication failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -32,8 +40,10 @@ const AdminLogin = () => {
     <div className="min-h-[70vh] flex items-center justify-center">
       <div className="w-full max-w-md p-8 rounded-3xl bg-white/50 backdrop-blur-2xl border border-white/60 shadow-2xl shadow-indigo-100/50 animate-in fade-in zoom-in duration-500">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-extrabold text-gray-900">Admin Access</h2>
-          <p className="text-gray-600 mt-2">Sign in to manage FAQs and approve questions.</p>
+          <h2 className="text-3xl font-extrabold text-gray-900">{isLogin ? 'Welcome Back' : 'Create an Account'}</h2>
+          <p className="text-gray-600 mt-2">
+            {isLogin ? 'Sign in to access FAQs.' : 'Sign up to explore the Vicharanashala FAQs.'}
+          </p>
         </div>
         
         {error && (
@@ -42,7 +52,20 @@ const AdminLogin = () => {
           </div>
         )}
 
-        <form className="space-y-6" onSubmit={handleLogin}>
+        <form className="space-y-6" onSubmit={handleAuth}>
+          {!isLogin && (
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700 ml-1">Name</label>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full px-5 py-3 rounded-xl bg-white/60 border border-white/80 focus:border-sky-400 focus:ring-4 focus:ring-sky-100 outline-none transition-all text-gray-800"
+                placeholder="John Doe"
+              />
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 ml-1">Email</label>
             <input 
@@ -51,7 +74,7 @@ const AdminLogin = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-5 py-3 rounded-xl bg-white/60 border border-white/80 focus:border-sky-400 focus:ring-4 focus:ring-sky-100 outline-none transition-all text-gray-800"
-              placeholder="admin@vicharanashala.ai"
+              placeholder="user@example.com"
             />
           </div>
           <div className="space-y-2">
@@ -68,18 +91,29 @@ const AdminLogin = () => {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-3.5 rounded-xl bg-gray-900 hover:bg-gray-800 disabled:bg-gray-700 text-white font-semibold shadow-lg shadow-gray-200 hover:-translate-y-0.5 transition-all duration-300"
+            className="w-full flex justify-center py-3.5 rounded-xl bg-sky-600 hover:bg-sky-700 disabled:bg-sky-400 text-white font-semibold shadow-lg shadow-sky-200 hover:-translate-y-0.5 transition-all duration-300"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
-              'Sign In'
+              isLogin ? 'Sign In' : 'Sign Up'
             )}
           </button>
         </form>
+
+        <div className="mt-6 text-center text-sm text-gray-600">
+          {isLogin ? "Don't have an account? " : "Already have an account? "}
+          <button 
+            type="button" 
+            onClick={() => { setIsLogin(!isLogin); setError(''); }}
+            className="text-sky-600 font-semibold hover:underline"
+          >
+            {isLogin ? 'Sign up' : 'Log in'}
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AdminLogin;
+export default AuthPage;

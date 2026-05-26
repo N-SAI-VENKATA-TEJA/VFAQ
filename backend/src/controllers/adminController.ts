@@ -77,6 +77,8 @@ export const getSubmittedQuestions = async (req: Request, res: Response): Promis
   }
 };
 
+import { AQ } from '../models/AQ';
+
 // PATCH /api/admin/questions/:id
 export const updateSubmittedQuestion = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -92,6 +94,20 @@ export const updateSubmittedQuestion = async (req: Request, res: Response): Prom
     if (aiGeneratedAnswer) question.aiGeneratedAnswer = aiGeneratedAnswer;
     
     await question.save();
+
+    // If status is approved, automatically create an AQ
+    if (status === 'approved') {
+      const aqSlug = question.question.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now();
+      await AQ.create({
+        section: question.category,
+        sectionNumber: 99, // default unassigned section number
+        question: question.question,
+        answer: question.aiGeneratedAnswer || 'Pending community or admin answer.',
+        slug: aqSlug,
+        askedCount: 1,
+        isPublished: true
+      });
+    }
 
     res.json(question);
   } catch (error: any) {

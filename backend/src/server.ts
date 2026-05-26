@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes';
 import faqRoutes from './routes/faqRoutes';
 import questionRoutes from './routes/questionRoutes';
+import aqRoutes from './routes/aqRoutes';
 import adminRoutes from './routes/adminRoutes';
 import { connectDB } from './config/db';
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/faqs', faqRoutes);
+app.use('/api/aqs', aqRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/admin', adminRoutes);
 

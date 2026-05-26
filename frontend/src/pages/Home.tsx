@@ -24,13 +24,20 @@ const Home = () => {
         Find answers to everything from selection to team formation.
       </p>
 
-      <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md">
+      <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-2xl">
         <Link 
           to="/faqs" 
           className="flex-1 inline-flex justify-center items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-semibold text-lg shadow-lg shadow-sky-200 hover:shadow-sky-300 hover:-translate-y-1 transition-all duration-300"
         >
           <Search className="w-5 h-5" />
           Browse FAQs
+        </Link>
+        <Link 
+          to="/aqs" 
+          className="flex-1 inline-flex justify-center items-center gap-2 px-8 py-4 rounded-2xl bg-white/50 backdrop-blur-md border border-sky-200 text-sky-800 font-semibold text-lg shadow-sm hover:bg-sky-50 hover:-translate-y-1 transition-all duration-300"
+        >
+          <MessageCircleQuestion className="w-5 h-5 text-sky-600" />
+          Browse AQs
         </Link>
         <Link 
           to="/my-queries" 

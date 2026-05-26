@@ -29,6 +29,7 @@ interface PendingQuestion {
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [aqs, setAqs] = useState<any[]>([]);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -39,13 +40,15 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsRes, faqsRes, questionsRes] = await Promise.all([
+      const [statsRes, faqsRes, aqsRes, questionsRes] = await Promise.all([
         api.get('/admin/stats'),
         api.get('/admin/faqs'),
+        api.get('/aqs'),
         api.get('/admin/questions?status=pending')
       ]);
       setStats(statsRes.data);
       setFaqs(faqsRes.data);
+      setAqs(aqsRes.data);
       setPendingQuestions(questionsRes.data);
     } catch (error) {
       console.error('Failed to fetch admin data', error);
@@ -116,6 +119,18 @@ const AdminDashboard = () => {
       fetchData();
     } catch (error) {
       console.error('Failed to reject question', error);
+    }
+  };
+
+  const handlePromoteAQ = async (id: string) => {
+    if (!window.confirm('Promote this AQ to an official FAQ?')) return;
+    try {
+      await api.post(`/aqs/${id}/promote`);
+      alert('Promoted to FAQ successfully!');
+      fetchData();
+    } catch (error) {
+      console.error('Failed to promote AQ', error);
+      alert('Error promoting AQ');
     }
   };
 
@@ -247,6 +262,50 @@ const AdminDashboard = () => {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Manage AQs Section */}
+      <div className="p-8 rounded-3xl bg-white/40 backdrop-blur-xl border border-white/60 shadow-xl shadow-indigo-100/50 mt-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Manage AQs (Asked Questions)</h2>
+        </div>
+
+        <div className="overflow-x-auto max-h-[400px] rounded-xl border border-white/40">
+          <table className="w-full text-left border-collapse">
+            <thead className="sticky top-0 bg-white/80 backdrop-blur-md z-10">
+              <tr className="border-b border-gray-300/50 text-gray-500 text-sm">
+                <th className="py-4 font-semibold px-4">Asked</th>
+                <th className="py-4 font-semibold px-4">Question</th>
+                <th className="py-4 font-semibold px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200/50 bg-white/20">
+              {loading && aqs.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="py-8 text-center text-gray-500">Loading AQs...</td>
+                </tr>
+              ) : aqs.map((aq) => (
+                <tr key={aq._id} className="hover:bg-white/50 transition-colors group">
+                  <td className="py-4 px-4 text-center font-bold text-sky-600">
+                    {aq.askedCount || 1}
+                  </td>
+                  <td className="py-4 px-4">
+                    <p className="text-gray-900 font-medium line-clamp-1">{aq.question}</p>
+                    <p className="text-gray-500 text-xs line-clamp-1 mt-1">{aq.section}</p>
+                  </td>
+                  <td className="py-4 px-4 text-right">
+                    <button 
+                      onClick={() => handlePromoteAQ(aq._id)}
+                      className="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider transition-colors border border-indigo-200"
+                    >
+                      Promote to FAQ
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 

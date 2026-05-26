@@ -7,58 +7,53 @@ interface AccordionProps {
     _id: string;
     question: string;
     answer: string;
-    helpfulVotes?: number;
-    unhelpfulVotes?: number;
-    viewCount?: number;
+    helpfulVotes: number;
+    unhelpfulVotes: number;
+    askedCount?: number;
   };
+  type?: 'FAQ' | 'AQ';
 }
 
-const Accordion: React.FC<AccordionProps> = ({ faq }) => {
+const Accordion: React.FC<AccordionProps> = ({ faq, type = 'FAQ' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasViewed, setHasViewed] = useState(false);
-  const [voteType, setVoteType] = useState<'helpful' | 'unhelpful' | null>(null);
+  const [voteType, setVoteType] = useState<'helpful' | 'unhelpful' | 'ask' | null>(null);
   
   // Local state for optimistic updates
   const [helpfulCount, setHelpfulCount] = useState(faq.helpfulVotes || 0);
   const [unhelpfulCount, setUnhelpfulCount] = useState(faq.unhelpfulVotes || 0);
 
   useEffect(() => {
-    if (isOpen && !hasViewed) {
-      setHasViewed(true);
-      api.post(`/faqs/${faq._id}/view`).catch(err => console.error('Failed to track view', err));
-    }
-  }, [isOpen, hasViewed, faq._id]);
+    const trackView = async () => {
+      if (isOpen && !hasViewed) {
+        try {
+          const endpoint = type === 'AQ' ? `/aqs/${faq._id}/view` : `/faqs/${faq._id}/view`;
+          await api.post(endpoint);
+          setHasViewed(true);
+        } catch (err) {
+          console.error('Failed to track view', err);
+        }
+      }
+    };
+    trackView();
+  }, [isOpen, hasViewed, faq._id, type]);
 
-  const handleVote = async (type: 'helpful' | 'unhelpful') => {
-    const isRemoving = voteType === type;
-    const isChanging = voteType !== null && voteType !== type;
+  const handleVote = async (targetVote: 'helpful' | 'unhelpful' | 'ask') => {
     const previousVoteType = voteType;
+    const isRemoving = voteType === targetVote;
     
-    // Optimistic UI update
+    // Optimistic UI update logic
     if (isRemoving) {
       setVoteType(null);
-      if (type === 'helpful') setHelpfulCount(c => c - 1);
-      else setUnhelpfulCount(c => c - 1);
-    } else if (isChanging) {
-      setVoteType(type);
-      if (type === 'helpful') {
-        setHelpfulCount(c => c + 1);
-        setUnhelpfulCount(c => c - 1);
-      } else {
-        setHelpfulCount(c => c - 1);
-        setUnhelpfulCount(c => c + 1);
-      }
     } else {
-      setVoteType(type);
-      if (type === 'helpful') setHelpfulCount(c => c + 1);
-      else setUnhelpfulCount(c => c + 1);
+      setVoteType(targetVote);
     }
 
     try {
-      await api.post(`/faqs/${faq._id}/vote`, { voteType: type });
+      const endpoint = type === 'AQ' ? `/aqs/${faq._id}/vote` : `/faqs/${faq._id}/vote`;
+      await api.post(endpoint, { voteType: targetVote });
     } catch (error) {
       console.error('Failed to vote', error);
-      // Fallback reversion omitted for brevity as counts would need exact previous logic
       setVoteType(previousVoteType);
     }
   };
@@ -87,6 +82,19 @@ const Accordion: React.FC<AccordionProps> = ({ faq }) => {
         <div className="px-6 pb-6 pt-2 flex items-center gap-4 text-sm font-medium text-gray-500 border-t border-gray-200/60 mt-2">
           <span>Was this helpful?</span>
           <div className="flex gap-2">
+            {type === 'AQ' && (
+              <button
+                onClick={() => handleVote('ask')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  voteType === 'ask' 
+                    ? 'bg-sky-100 text-sky-700 border border-sky-300' 
+                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <span>+1 Me too</span>
+                {faq.askedCount !== undefined && <span className="text-xs opacity-70">({faq.askedCount + (voteType === 'ask' ? 1 : 0)})</span>}
+              </button>
+            )}
             <button 
               onClick={() => handleVote('helpful')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${

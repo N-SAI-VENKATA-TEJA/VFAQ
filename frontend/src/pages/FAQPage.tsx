@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import api from '../api/axios';
 import Accordion from '../components/ui/Accordion';
+import { useAuthStore } from '../store/authStore';
 
 interface FAQ {
   _id: string;
@@ -17,6 +18,7 @@ const FAQPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
+  const { user } = useAuthStore();
 
   useEffect(() => {
     const fetchFAQs = async () => {
@@ -126,7 +128,13 @@ const FAQPage = () => {
             if (!input.value.trim()) return;
             
             try {
-              await api.post('/questions/submit', { question: input.value });
+              const category = selectedCategory === 'All Categories' ? 'General' : selectedCategory;
+              await api.post('/questions/submit', { 
+                question: input.value,
+                category,
+                submitterName: user?.name,
+                submitterEmail: user?.email
+              });
               alert('Question submitted successfully! It is now pending review.');
               input.value = '';
             } catch (error) {

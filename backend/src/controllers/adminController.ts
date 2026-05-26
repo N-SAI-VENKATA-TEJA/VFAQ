@@ -68,7 +68,9 @@ export const deleteFaq = async (req: Request, res: Response): Promise<void> => {
 // GET /api/admin/questions
 export const getSubmittedQuestions = async (req: Request, res: Response): Promise<void> => {
   try {
-    const questions = await SubmittedQuestion.find().sort({ createdAt: -1 });
+    const { status } = req.query;
+    const query = status ? { status } : {};
+    const questions = await SubmittedQuestion.find(query).sort({ createdAt: -1 });
     res.json(questions);
   } catch (error: any) {
     res.status(500).json({ message: error.message });

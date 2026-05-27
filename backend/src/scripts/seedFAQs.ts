@@ -27,8 +27,13 @@ const seedData = async () => {
     console.log('Existing FAQs and Users deleted');
 
     // 2. Create Admin User
-    const adminEmail = 'admin@vicharanashala.ai';
-    const adminPassword = 'Admin@1234';
+    const adminEmail = process.env.SEED_ADMIN_EMAIL;
+    const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword) {
+      console.error('SEED_ADMIN_EMAIL or SEED_ADMIN_PASSWORD is missing in .env');
+      process.exit(1);
+    }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(adminPassword, salt);
 

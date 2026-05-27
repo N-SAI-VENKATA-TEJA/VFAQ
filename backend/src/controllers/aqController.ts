@@ -67,6 +67,11 @@ export const voteAQ = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const { voteType } = req.body; // 'helpful', 'unhelpful', or 'ask'
     
+    if (!voteType || !['helpful', 'unhelpful', 'ask'].includes(voteType)) {
+      res.status(400).json({ message: 'voteType must be "helpful", "unhelpful", or "ask"' });
+      return;
+    }
+
     // Using IP as fallback identifier if user is not logged in
     const userId = (req as AuthRequest).user?._id?.toString() || req.ip || 'anonymous';
 
@@ -123,7 +128,11 @@ export const voteAQ = async (req: Request, res: Response): Promise<void> => {
 
     res.json({ message: 'Vote recorded', aq });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    if (error.code === 11000) {
+      res.status(400).json({ message: 'Duplicate vote detected' });
+    } else {
+      res.status(500).json({ message: error.message });
+    }
   }
 };
 

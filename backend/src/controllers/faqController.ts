@@ -64,6 +64,11 @@ export const voteFaq = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const { voteType } = req.body; // 'helpful' or 'unhelpful'
 
+    if (!voteType || !['helpful', 'unhelpful'].includes(voteType)) {
+      res.status(400).json({ message: 'voteType must be "helpful" or "unhelpful"' });
+      return;
+    }
+
     // We use the authenticated user's ID
     const userIdOrIpHash = (req as any).user._id.toString();
 

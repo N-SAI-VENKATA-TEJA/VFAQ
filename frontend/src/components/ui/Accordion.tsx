@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ThumbsUp, ThumbsDown } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import api from '../../api/axios';
 
 interface AccordionProps {
@@ -20,8 +21,8 @@ const Accordion: React.FC<AccordionProps> = ({ faq, type = 'FAQ' }) => {
   const [voteType, setVoteType] = useState<'helpful' | 'unhelpful' | 'ask' | null>(null);
   
   // Local state for optimistic updates
-  const [helpfulCount, setHelpfulCount] = useState(faq.helpfulVotes || 0);
-  const [unhelpfulCount, setUnhelpfulCount] = useState(faq.unhelpfulVotes || 0);
+  const [helpfulCount] = useState(faq.helpfulVotes || 0);
+  const [unhelpfulCount] = useState(faq.unhelpfulVotes || 0);
 
   useEffect(() => {
     const trackView = async () => {
@@ -75,7 +76,7 @@ const Accordion: React.FC<AccordionProps> = ({ faq, type = 'FAQ' }) => {
       >
         <div 
           className="px-6 pb-4 pt-2 text-gray-600 prose prose-sky max-w-none"
-          dangerouslySetInnerHTML={{ __html: faq.answer }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(faq.answer) }}
         />
         
         {/* Voting Section */}

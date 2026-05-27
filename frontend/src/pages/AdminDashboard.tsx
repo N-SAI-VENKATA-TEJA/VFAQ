@@ -23,6 +23,7 @@ interface FAQ {
 interface PendingQuestion {
   _id: string;
   question: string;
+  category: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
 }

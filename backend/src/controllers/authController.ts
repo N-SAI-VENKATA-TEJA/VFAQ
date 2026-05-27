@@ -24,6 +24,17 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password } = req.body;
 
+    // Input validation
+    if (!name || !email || !password || typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
+      res.status(400).json({ message: 'Name, email, and password are required and must be strings' });
+      return;
+    }
+
+    if (password.length < 6) {
+      res.status(400).json({ message: 'Password must be at least 6 characters' });
+      return;
+    }
+
     const userExists = await User.findOne({ email });
     if (userExists) {
       res.status(400).json({ message: 'User already exists' });
@@ -61,6 +72,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+
+    // Type validation to prevent NoSQL injection
+    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+      res.status(401).json({ message: 'Invalid email or password' });
+      return;
+    }
 
     const user = await User.findOne({ email }).select('+password');
 

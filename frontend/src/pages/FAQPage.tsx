@@ -11,6 +11,8 @@ interface FAQ {
   question: string;
   answer: string;
   slug: string;
+  helpfulVotes: number;
+  unhelpfulVotes: number;
 }
 
 const FAQPage = () => {

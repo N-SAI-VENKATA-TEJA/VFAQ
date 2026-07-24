@@ -1,13 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-  .animation-delay-4000 {
-    animation-delay: 4s;
+@layer base {
+  :root {
+    /* Brand Colors */
+    --brand--white: #FFFFFF;
+    --brand--black-light: #00000005;
+    --brand--aqua: #2CAF9E;
+    --brand--aqua-50: rgba(44, 175, 158, 0.5);
+    --brand--aqua-30: rgba(44, 175, 158, 0.3);
+    --brand--aqua-20: rgba(44, 175, 158, 0.2);
+    --brand--neutral-dark: #1D1D1D;
+    --brand--neutral-lighter: #F7F7F8;
+    --brand--gray-light: #EBEBEB;
+  
+    /* Background Colors */
+    --bg-color--bg-primary: #FFFFFF;
+    --bg-color--bg-secondary: #F7F7F8;
+    --bg-color--bg-tertiary: #131313;
+    --bg-color--bg-alternate: #1A2433;
+    --bg-color--bg-aqua: #2CAF9E;
+  
+    /* Text Colors */
+    --text-color--text-primary: #131313;
+    --text-color--text-secondary: #6B6B6B;
+    --text-color--text-tertiary: #9B9B9B;
+    --text-color--text-white: #FFFFFF;
+    --text-color--text-aqua: #2CAF9E;
+  
+    /* Border Colors */
+    --border-color--border-primary: rgba(0, 0, 0, 0.1);
+    --border-color--border-secondary: #2CAF9E;
   }
 }
 
@@ -15,4 +41,13 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color--bg-primary);
+  color: var(--text-color--text-primary);
+}
+
+@layer utilities {
+  .text-style-allcaps {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
 }

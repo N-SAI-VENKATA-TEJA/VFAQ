@@ -53,86 +53,86 @@ const FAQModal: React.FC<FAQModalProps> = ({ isOpen, onClose, onSave, faq }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white/80 backdrop-blur-xl border border-white/80 shadow-2xl rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white/90 backdrop-blur-md px-6 py-4 border-b border-gray-200 flex justify-between items-center z-10">
-          <h2 className="text-2xl font-bold text-gray-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/10 animate-in fade-in duration-300">
+      <div className="bg-brand-white border border-border-primary shadow-card-inner rounded-card w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-brand-white/90 backdrop-blur-md px-8 py-6 border-b border-border-primary flex justify-between items-center z-10">
+          <h2 className="text-2xl font-medium tracking-tight-xl text-text-primary">
             {faq ? 'Edit FAQ' : 'Create New FAQ'}
           </h2>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-200/50 text-gray-500 transition-colors">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-bg-secondary text-text-secondary transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-sm font-semibold text-gray-700">Section Number</label>
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-text-primary ml-4">Section Number</label>
               <input 
                 type="number"
                 required
                 value={formData.sectionNumber || ''}
                 onChange={(e) => setFormData({ ...formData, sectionNumber: parseInt(e.target.value) })}
-                className="w-full px-4 py-2 rounded-xl bg-white/60 border border-gray-300 focus:border-sky-400 focus:ring-4 focus:ring-sky-100 outline-none"
+                className="block w-full px-6 py-3 min-h-[3.5rem] rounded-pill bg-brand-white border border-brand-gray-light shadow-input-inner focus:outline-none focus:border-border-secondary transition-colors text-text-primary text-base placeholder-[#8C8C9A]"
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-sm font-semibold text-gray-700">Section Name</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-text-primary ml-4">Section Name</label>
               <input 
                 type="text"
                 required
                 value={formData.section || ''}
                 onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl bg-white/60 border border-gray-300 focus:border-sky-400 focus:ring-4 focus:ring-sky-100 outline-none"
+                className="block w-full px-6 py-3 min-h-[3.5rem] rounded-pill bg-brand-white border border-brand-gray-light shadow-input-inner focus:outline-none focus:border-border-secondary transition-colors text-text-primary text-base placeholder-[#8C8C9A]"
               />
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-sm font-semibold text-gray-700">Question</label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-text-primary ml-4">Question</label>
             <input 
               type="text"
               required
               value={formData.question || ''}
               onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-              className="w-full px-4 py-2 rounded-xl bg-white/60 border border-gray-300 focus:border-sky-400 focus:ring-4 focus:ring-sky-100 outline-none"
+              className="block w-full px-6 py-3 min-h-[3.5rem] rounded-pill bg-brand-white border border-brand-gray-light shadow-input-inner focus:outline-none focus:border-border-secondary transition-colors text-text-primary text-base placeholder-[#8C8C9A]"
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="text-sm font-semibold text-gray-700">Answer (HTML allowed)</label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-text-primary ml-4">Answer (HTML allowed)</label>
             <textarea 
               required
               rows={5}
               value={formData.answer || ''}
               onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-              className="w-full px-4 py-2 rounded-xl bg-white/60 border border-gray-300 focus:border-sky-400 focus:ring-4 focus:ring-sky-100 outline-none resize-y"
+              className="block w-full px-6 py-4 rounded-[1.5rem] bg-brand-white border border-brand-gray-light shadow-input-inner focus:outline-none focus:border-border-secondary transition-colors text-text-primary text-base placeholder-[#8C8C9A] resize-y"
             ></textarea>
           </div>
 
-          <div className="flex items-center gap-2 pt-2">
+          <div className="flex items-center gap-2 pt-2 ml-4">
             <input 
               type="checkbox"
               id="isPublished"
               checked={formData.isPublished}
               onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
-              className="w-4 h-4 text-sky-600 rounded focus:ring-sky-500"
+              className="w-5 h-5 text-brand-aqua rounded focus:ring-brand-aqua/30"
             />
-            <label htmlFor="isPublished" className="font-medium text-gray-700">Published (Visible to public)</label>
+            <label htmlFor="isPublished" className="font-medium text-text-primary">Published (Visible to public)</label>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200/60">
+          <div className="flex justify-end gap-3 pt-6 mt-4 border-t border-border-primary">
             <button 
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition-colors"
+              className="px-6 py-3 rounded-pill bg-brand-white border border-brand-gray-light hover:bg-bg-secondary text-text-primary font-semibold transition-colors shadow-sm"
             >
               Cancel
             </button>
             <button 
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-medium shadow-md hover:shadow-lg transition-all"
+              className="px-8 py-3 rounded-pill bg-bg-tertiary hover:bg-[#353539] text-brand-white font-semibold transition-colors shadow-button-primary disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save FAQ'}
             </button>

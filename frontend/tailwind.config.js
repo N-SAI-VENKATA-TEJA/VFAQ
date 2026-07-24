@@ -7,60 +7,66 @@ export default {
   theme: {
     extend: {
       colors: {
-        sky: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+        brand: {
+          white: 'var(--brand--white)',
+          'black-light': 'var(--brand--black-light)',
+          aqua: 'var(--brand--aqua)',
+          'aqua-50': 'var(--brand--aqua-50)',
+          'aqua-30': 'var(--brand--aqua-30)',
+          'aqua-20': 'var(--brand--aqua-20)',
+          'neutral-dark': 'var(--brand--neutral-dark)',
+          'neutral-lighter': 'var(--brand--neutral-lighter)',
+          'gray-light': 'var(--brand--gray-light)',
         },
-        lavender: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#8b5cf6',
-          600: '#7c3aed',
+        bg: {
+          primary: 'var(--bg-color--bg-primary)',
+          secondary: 'var(--bg-color--bg-secondary)',
+          tertiary: 'var(--bg-color--bg-tertiary)',
+          alternate: 'var(--bg-color--bg-alternate)',
+          aqua: 'var(--bg-color--bg-aqua)',
         },
-        mint: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
+        text: {
+          primary: 'var(--text-color--text-primary)',
+          secondary: 'var(--text-color--text-secondary)',
+          tertiary: 'var(--text-color--text-tertiary)',
+          white: 'var(--text-color--text-white)',
+          aqua: 'var(--text-color--text-aqua)',
+        },
+        border: {
+          primary: 'var(--border-color--border-primary)',
+          secondary: 'var(--border-color--border-secondary)',
         }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+      letterSpacing: {
+        'tight-xl': '-0.04em',
+        'tight-2xl': '-0.045em',
+        'badge': '0.2em',
+        'price': '0.14em',
+      },
+      boxShadow: {
+        'card-inner': '0 4px 9px #00000008, 0 17px 17px #00000008, 0 38px 23px #00000005, 0 67px 27px #00000003',
+        'button-primary': '0 0 0 1px #12376914, 0 2px 3px #2a3b5126',
+        'input-inner': 'inset 0 -2px 5px #ffffff14, inset 0 2px 5px #ffffff14',
+      },
+      borderRadius: {
+        'pill': '999rem',
+        'card': '2rem',
       },
       animation: {
-        blob: "blob 7s infinite",
-        "fade-in": "fadeIn 0.5s ease-in-out",
+        'fade-up': 'fadeUp 0.5s ease-out forwards',
       },
       keyframes: {
-        blob: {
-          "0%": {
-            transform: "translate(0px, 0px) scale(1)",
-          },
-          "33%": {
-            transform: "translate(30px, -50px) scale(1.1)",
-          },
-          "66%": {
-            transform: "translate(-20px, 20px) scale(0.9)",
-          },
-          "100%": {
-            transform: "translate(0px, 0px) scale(1)",
-          },
-        },
-        fadeIn: {
-          "0%": { opacity: 0 },
-          "100%": { opacity: 1 },
+        fadeUp: {
+          '0%': { opacity: 0, transform: 'translate3d(0, 15%, 0)' },
+          '100%': { opacity: 1, transform: 'translate3d(0, 0, 0)' },
         }
       },
+      backgroundImage: {
+        'hero-gradient': 'linear-gradient(244deg, var(--brand--aqua-30), var(--brand--aqua-20) 99.26%)',
+      }
     },
   },
   plugins: [

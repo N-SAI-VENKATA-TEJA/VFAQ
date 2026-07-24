@@ -155,82 +155,82 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-12">
-      <div className="flex justify-between items-center mb-8">
+    <div className="w-full max-w-[87rem] mx-auto space-y-12 animate-fade-up pb-16 pt-10">
+      <div className="flex justify-between items-center mb-10">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">Manage platform content and queued questions.</p>
+          <h1 className="text-4xl font-medium tracking-tight-xl text-text-primary">Admin Dashboard</h1>
+          <p className="text-text-secondary mt-2 text-lg">Manage platform content and queued questions.</p>
         </div>
         <button 
           onClick={fetchData}
-          className="p-2 rounded-xl bg-white/50 hover:bg-white/80 border border-white/60 text-gray-600 transition-colors shadow-sm"
+          className="p-3 rounded-full bg-brand-white border border-brand-gray-light text-text-secondary hover:text-text-primary transition-colors shadow-button-primary hover:scale-95 transition-transform"
           title="Refresh Data"
         >
-          <RefreshCcw className={`w-5 h-5 ${loading ? 'animate-spin text-sky-500' : ''}`} />
+          <RefreshCcw className={`w-5 h-5 ${loading ? 'animate-spin text-brand-aqua' : ''}`} />
         </button>
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <MetricCard title="Total FAQs" value={stats?.totalFaqs} color="text-sky-600" />
-        <MetricCard title="Pending Questions" value={stats?.pendingQuestions} color="text-amber-600" />
-        <MetricCard title="Helpful Votes" value={stats?.totalHelpfulVotes} color="text-emerald-600" />
-        <MetricCard title="Unhelpful Votes" value={stats?.totalUnhelpfulVotes} color="text-rose-600" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <MetricCard title="Total FAQs" value={stats?.totalFaqs} color="text-brand-aqua" />
+        <MetricCard title="Pending Questions" value={stats?.pendingQuestions} color="text-text-primary" />
+        <MetricCard title="Helpful Votes" value={stats?.totalHelpfulVotes} color="text-brand-aqua" />
+        <MetricCard title="Unhelpful Votes" value={stats?.totalUnhelpfulVotes} color="text-text-tertiary" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
         {/* FAQs Management Section */}
-        <div className="lg:col-span-2 p-8 rounded-3xl bg-white/40 backdrop-blur-xl border border-white/60 shadow-xl shadow-sky-100/50">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Manage FAQs</h2>
+        <div className="lg:col-span-2 p-10 rounded-card bg-bg-secondary border border-border-primary shadow-card-inner">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-medium tracking-tight-xl text-text-primary">Manage FAQs</h2>
             <button 
               onClick={openCreateModal}
-              className="flex items-center gap-2 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              className="flex items-center gap-2 px-6 py-3 bg-brand-aqua text-brand-white rounded-pill font-medium transition-transform shadow-button-primary hover:scale-95"
             >
               <Plus className="w-5 h-5" />
               Create FAQ
             </button>
           </div>
 
-          <div className="overflow-x-auto max-h-[600px] rounded-xl border border-white/40">
+          <div className="overflow-x-auto max-h-[600px] rounded-[1rem] border border-brand-gray-light bg-brand-white shadow-sm">
             <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-white/80 backdrop-blur-md z-10">
-                <tr className="border-b border-gray-300/50 text-gray-500 text-sm">
-                  <th className="py-4 font-semibold px-4">Sec</th>
-                  <th className="py-4 font-semibold px-4">Question</th>
-                  <th className="py-4 font-semibold px-4 text-center">Status</th>
-                  <th className="py-4 font-semibold px-4 text-right">Actions</th>
+              <thead className="sticky top-0 bg-brand-white z-10 shadow-sm">
+                <tr className="border-b border-border-primary text-text-tertiary text-sm">
+                  <th className="py-5 font-medium px-6">Sec</th>
+                  <th className="py-5 font-medium px-6">Question</th>
+                  <th className="py-5 font-medium px-6 text-center">Status</th>
+                  <th className="py-5 font-medium px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200/50 bg-white/20">
+              <tbody className="divide-y divide-border-primary">
                 {loading && faqs.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="py-8 text-center text-gray-500">Loading FAQs...</td>
+                    <td colSpan={4} className="py-8 text-center text-text-tertiary">Loading FAQs...</td>
                   </tr>
                 ) : faqs.map((faq) => (
-                  <tr key={faq._id} className="hover:bg-white/50 transition-colors group">
-                    <td className="py-4 px-4 text-gray-600 font-medium whitespace-nowrap">{faq.sectionNumber}.0</td>
-                    <td className="py-4 px-4">
-                      <p className="text-gray-900 font-medium line-clamp-1">{faq.question}</p>
-                      <p className="text-gray-500 text-xs line-clamp-1 mt-1">{faq.section}</p>
+                  <tr key={faq._id} className="hover:bg-brand-neutral-lighter transition-colors group">
+                    <td className="py-4 px-6 text-text-secondary font-medium whitespace-nowrap">{faq.sectionNumber}.0</td>
+                    <td className="py-4 px-6">
+                      <p className="text-text-primary font-medium line-clamp-1">{faq.question}</p>
+                      <p className="text-text-tertiary text-xs line-clamp-1 mt-1">{faq.section}</p>
                     </td>
-                    <td className="py-4 px-4 text-center">
-                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase ${faq.isPublished ? 'bg-emerald-100/80 text-emerald-700' : 'bg-gray-200/80 text-gray-600'}`}>
+                    <td className="py-4 px-6 text-center">
+                      <span className={`px-3 py-1.5 rounded-pill text-[10px] font-semibold tracking-badge uppercase border ${faq.isPublished ? 'bg-brand-aqua-20 text-brand-aqua border-brand-aqua-50' : 'bg-brand-gray-light text-text-secondary border-border-primary'}`}>
                         {faq.isPublished ? 'Pub' : 'Draft'}
                       </span>
                     </td>
-                    <td className="py-4 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => openEditModal(faq)}
-                          className="p-2 rounded-lg bg-white/60 text-sky-700 hover:bg-sky-100 transition-colors border border-sky-100"
+                          className="p-2 rounded-lg bg-brand-white text-text-aqua hover:bg-brand-neutral-lighter transition-colors border border-brand-gray-light shadow-sm"
                           title="Edit"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(faq._id)}
-                          className="p-2 rounded-lg bg-white/60 text-rose-700 hover:bg-rose-100 transition-colors border border-rose-100"
+                          className="p-2 rounded-lg bg-brand-white text-[#E53935] hover:bg-[#ffebee] transition-colors border border-brand-gray-light shadow-sm"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -245,11 +245,11 @@ const AdminDashboard = () => {
         </div>
 
         {/* Pending Questions Section */}
-        <div className="lg:col-span-1 p-8 rounded-3xl bg-gradient-to-b from-white/50 to-amber-50/30 backdrop-blur-xl border border-white/60 shadow-xl shadow-amber-100/20">
-          <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <div className="lg:col-span-1 p-10 rounded-card bg-bg-secondary border border-border-primary shadow-card-inner">
+          <h2 className="text-2xl font-medium tracking-tight-xl text-text-primary mb-8 flex items-center gap-3">
             Pending Queue
             {pendingQuestions.length > 0 && (
-              <span className="bg-amber-100 text-amber-700 text-xs py-1 px-2.5 rounded-full font-bold">
+              <span className="bg-bg-tertiary text-brand-white text-[10px] py-1 px-3 rounded-pill font-semibold tracking-badge uppercase">
                 {pendingQuestions.length} New
               </span>
             )}
@@ -257,24 +257,24 @@ const AdminDashboard = () => {
 
           <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
             {pendingQuestions.length === 0 ? (
-              <div className="text-center py-10 bg-white/30 rounded-2xl border border-white/50">
-                <Check className="w-8 h-8 text-emerald-400 mx-auto mb-2 opacity-50" />
-                <p className="text-gray-500 font-medium">All caught up!</p>
-                <p className="text-xs text-gray-400 mt-1">No pending questions.</p>
+              <div className="text-center py-12 bg-brand-white rounded-[1.5rem] border border-border-primary shadow-sm">
+                <Check className="w-10 h-10 text-brand-aqua mx-auto mb-3 opacity-50" />
+                <p className="text-text-secondary font-medium">All caught up!</p>
+                <p className="text-sm text-text-tertiary mt-1">No pending questions.</p>
               </div>
             ) : pendingQuestions.map(q => (
-              <div key={q._id} className="p-4 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm hover:shadow-md transition-shadow">
-                <p className="text-gray-800 font-medium text-sm mb-4 leading-snug">{q.question}</p>
-                <div className="flex gap-2">
+              <div key={q._id} className="p-5 bg-brand-white rounded-[1rem] border border-brand-gray-light shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-text-primary font-medium text-sm mb-5 leading-relaxed">{q.question}</p>
+                <div className="flex gap-3">
                   <button 
                     onClick={() => handleApproveQuestion(q)}
-                    className="flex-1 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-1 border border-emerald-200"
+                    className="flex-1 py-2.5 bg-brand-aqua text-brand-white text-xs font-semibold tracking-badge uppercase rounded-pill transition-transform hover:scale-95 flex items-center justify-center gap-1.5 shadow-button-primary"
                   >
                     <Check className="w-3.5 h-3.5" /> Approve
                   </button>
                   <button 
                     onClick={() => handleRejectQuestion(q._id)}
-                    className="flex-1 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-1 border border-rose-200"
+                    className="flex-1 py-2.5 bg-brand-white hover:bg-brand-neutral-lighter text-text-primary text-xs font-semibold tracking-badge uppercase rounded-pill transition-transform hover:scale-95 flex items-center justify-center gap-1.5 border border-brand-gray-light shadow-button-primary"
                   >
                     <XIcon className="w-3.5 h-3.5" /> Reject
                   </button>
@@ -286,44 +286,44 @@ const AdminDashboard = () => {
       </div>
 
       {/* Manage AQs Section */}
-      <div className="p-8 rounded-3xl bg-white/40 backdrop-blur-xl border border-white/60 shadow-xl shadow-indigo-100/50 mt-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Manage AQs (Asked Questions)</h2>
+      <div className="p-10 rounded-card bg-bg-secondary border border-border-primary shadow-card-inner mt-12">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-medium tracking-tight-xl text-text-primary">Manage AQs (Asked Questions)</h2>
         </div>
 
-        <div className="overflow-x-auto max-h-[400px] rounded-xl border border-white/40">
+        <div className="overflow-x-auto max-h-[400px] rounded-[1rem] border border-brand-gray-light bg-brand-white shadow-sm">
           <table className="w-full text-left border-collapse">
-            <thead className="sticky top-0 bg-white/80 backdrop-blur-md z-10">
-              <tr className="border-b border-gray-300/50 text-gray-500 text-sm">
-                <th className="py-4 font-semibold px-4 w-24">Sec</th>
-                <th className="py-4 font-semibold px-4">Question</th>
-                <th className="py-4 font-semibold px-4 text-right">Actions</th>
+            <thead className="sticky top-0 bg-brand-white z-10 shadow-sm">
+              <tr className="border-b border-border-primary text-text-tertiary text-sm">
+                <th className="py-5 font-medium px-6 w-24">Sec</th>
+                <th className="py-5 font-medium px-6">Question</th>
+                <th className="py-5 font-medium px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200/50 bg-white/20">
+            <tbody className="divide-y divide-border-primary">
               {loading && aqs.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="py-8 text-center text-gray-500">Loading AQs...</td>
+                  <td colSpan={3} className="py-8 text-center text-text-tertiary">Loading AQs...</td>
                 </tr>
               ) : aqs.map((aq) => (
-                <tr key={aq._id} className="hover:bg-white/50 transition-colors group">
-                  <td className="py-4 px-4 font-medium text-gray-600">
+                <tr key={aq._id} className="hover:bg-brand-neutral-lighter transition-colors group">
+                  <td className="py-4 px-6 font-medium text-text-secondary">
                     {aq.sectionNumber}
                   </td>
-                  <td className="py-4 px-4">
-                    <p className="text-gray-900 font-medium line-clamp-1">{aq.question}</p>
-                    <p className="text-gray-500 text-xs line-clamp-1 mt-1">{aq.section}</p>
+                  <td className="py-4 px-6">
+                    <p className="text-text-primary font-medium line-clamp-1">{aq.question}</p>
+                    <p className="text-text-tertiary text-xs line-clamp-1 mt-1">{aq.section}</p>
                   </td>
-                  <td className="py-4 px-4 text-right space-x-2 whitespace-nowrap">
+                  <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
                     <button 
                       onClick={() => handlePromoteAQ(aq._id)}
-                      className="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider transition-colors border border-indigo-200 inline-flex items-center gap-1"
+                      className="px-4 py-2 rounded-pill bg-brand-aqua text-brand-white text-xs font-semibold uppercase tracking-badge transition-transform hover:scale-95 shadow-button-primary inline-flex items-center gap-1.5"
                     >
                       <Check className="w-3.5 h-3.5" /> Promote
                     </button>
                     <button 
                       onClick={() => handleDeleteAQ(aq._id)}
-                      className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold uppercase tracking-wider transition-colors border border-rose-200 inline-flex items-center gap-1"
+                      className="px-4 py-2 rounded-pill bg-brand-white hover:bg-[#ffebee] text-[#E53935] text-xs font-semibold uppercase tracking-badge transition-transform hover:scale-95 border border-brand-gray-light shadow-button-primary inline-flex items-center gap-1.5"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete
                     </button>
@@ -356,9 +356,9 @@ const AdminDashboard = () => {
 };
 
 const MetricCard = ({ title, value, color }: { title: string, value?: number, color: string }) => (
-  <div className="p-6 rounded-3xl bg-white/50 backdrop-blur-xl border border-white/60 shadow-lg shadow-sky-100/30">
-    <h3 className="text-gray-500 font-medium text-sm">{title}</h3>
-    <p className={`text-4xl font-extrabold mt-2 ${color}`}>
+  <div className="p-8 rounded-card bg-bg-secondary border border-border-primary shadow-card-inner">
+    <h3 className="text-text-secondary font-semibold text-xs tracking-badge uppercase">{title}</h3>
+    <p className={`text-5xl font-medium mt-4 tracking-tight-xl ${color}`}>
       {value !== undefined ? value : '--'}
     </p>
   </div>

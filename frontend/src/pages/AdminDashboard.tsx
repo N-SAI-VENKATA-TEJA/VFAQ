@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { Edit, Trash2, Plus, RefreshCcw, Check, X as XIcon } from 'lucide-react';
 import FAQModal from '../components/admin/FAQModal';
 import ApproveQuestionModal from '../components/admin/ApproveQuestionModal';
+import RejectQuestionModal from '../components/admin/RejectQuestionModal';
 
 interface Stats {
   totalFaqs: number;
@@ -31,7 +32,6 @@ interface PendingQuestion {
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [faqs, setFaqs] = useState<FAQ[]>([]);
-  const [aqs, setAqs] = useState<any[]>([]);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -40,19 +40,22 @@ const AdminDashboard = () => {
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
   const [selectedApproveQuestion, setSelectedApproveQuestion] = useState<PendingQuestion | null>(null);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [selectedRejectQuestion, setSelectedRejectQuestion] = useState<PendingQuestion | null>(null);
+
+  // Compute unique sections for the dropdown
+  const sections = Array.from(new Set(faqs.map(faq => faq.section)));
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsRes, faqsRes, aqsRes, questionsRes] = await Promise.all([
+      const [statsRes, faqsRes, questionsRes] = await Promise.all([
         api.get('/admin/stats'),
         api.get('/admin/faqs'),
-        api.get('/aqs'),
         api.get('/admin/questions?status=pending')
       ]);
       setStats(statsRes.data);
       setFaqs(faqsRes.data);
-      setAqs(aqsRes.data);
       setPendingQuestions(questionsRes.data);
     } catch (error) {
       console.error('Failed to fetch admin data', error);
@@ -121,38 +124,24 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleRejectQuestion = async (id: string) => {
-    if (!window.confirm('Reject and delete this question?')) return;
+  const handleRejectQuestion = (question: PendingQuestion) => {
+    setSelectedRejectQuestion(question);
+    setIsRejectModalOpen(true);
+  };
+
+  const submitRejectQuestion = async (id: string, reason: string) => {
     try {
-      await api.patch(`/admin/questions/${id}`, { status: 'rejected' });
+      await api.patch(`/admin/questions/${id}`, { status: 'rejected', rejectReason: reason });
+      setIsRejectModalOpen(false);
+      setSelectedRejectQuestion(null);
       fetchData();
     } catch (error) {
       console.error('Failed to reject question', error);
+      alert('Failed to reject question');
     }
   };
 
-  const handlePromoteAQ = async (id: string) => {
-    if (!window.confirm('Promote this AQ to an official FAQ?')) return;
-    try {
-      await api.post(`/aqs/${id}/promote`);
-      alert('Promoted to FAQ successfully!');
-      fetchData();
-    } catch (error) {
-      console.error('Failed to promote AQ', error);
-      alert('Error promoting AQ');
-    }
-  };
 
-  const handleDeleteAQ = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this AQ?')) return;
-    try {
-      await api.delete(`/aqs/${id}`);
-      fetchData();
-    } catch (error) {
-      console.error('Failed to delete AQ', error);
-      alert('Error deleting AQ');
-    }
-  };
 
   return (
     <div className="w-full max-w-[87rem] mx-auto space-y-12 animate-fade-up pb-16 pt-10">
@@ -273,7 +262,7 @@ const AdminDashboard = () => {
                     <Check className="w-3.5 h-3.5" /> Approve
                   </button>
                   <button 
-                    onClick={() => handleRejectQuestion(q._id)}
+                    onClick={() => handleRejectQuestion(q)}
                     className="flex-1 py-2.5 bg-brand-white hover:bg-brand-neutral-lighter text-text-primary text-xs font-semibold tracking-badge uppercase rounded-pill transition-transform hover:scale-95 flex items-center justify-center gap-1.5 border border-brand-gray-light shadow-button-primary"
                   >
                     <XIcon className="w-3.5 h-3.5" /> Reject
@@ -285,61 +274,13 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Manage AQs Section */}
-      <div className="p-10 rounded-card bg-bg-secondary border border-border-primary shadow-card-inner mt-12">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-medium tracking-tight-xl text-text-primary">Manage AQs (Asked Questions)</h2>
-        </div>
-
-        <div className="overflow-x-auto max-h-[400px] rounded-[1rem] border border-brand-gray-light bg-brand-white shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <thead className="sticky top-0 bg-brand-white z-10 shadow-sm">
-              <tr className="border-b border-border-primary text-text-tertiary text-sm">
-                <th className="py-5 font-medium px-6 w-24">Sec</th>
-                <th className="py-5 font-medium px-6">Question</th>
-                <th className="py-5 font-medium px-6 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-primary">
-              {loading && aqs.length === 0 ? (
-                <tr>
-                  <td colSpan={3} className="py-8 text-center text-text-tertiary">Loading AQs...</td>
-                </tr>
-              ) : aqs.map((aq) => (
-                <tr key={aq._id} className="hover:bg-brand-neutral-lighter transition-colors group">
-                  <td className="py-4 px-6 font-medium text-text-secondary">
-                    {aq.sectionNumber}
-                  </td>
-                  <td className="py-4 px-6">
-                    <p className="text-text-primary font-medium line-clamp-1">{aq.question}</p>
-                    <p className="text-text-tertiary text-xs line-clamp-1 mt-1">{aq.section}</p>
-                  </td>
-                  <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
-                    <button 
-                      onClick={() => handlePromoteAQ(aq._id)}
-                      className="px-4 py-2 rounded-pill bg-brand-aqua text-brand-white text-xs font-semibold uppercase tracking-badge transition-transform hover:scale-95 shadow-button-primary inline-flex items-center gap-1.5"
-                    >
-                      <Check className="w-3.5 h-3.5" /> Promote
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteAQ(aq._id)}
-                      className="px-4 py-2 rounded-pill bg-brand-white hover:bg-[#ffebee] text-[#E53935] text-xs font-semibold uppercase tracking-badge transition-transform hover:scale-95 border border-brand-gray-light shadow-button-primary inline-flex items-center gap-1.5"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" /> Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
       <FAQModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSave={handleSaveFaq}
         faq={editingFaq}
+        sections={sections}
       />
 
       <ApproveQuestionModal
@@ -350,6 +291,17 @@ const AdminDashboard = () => {
         }}
         onApprove={submitApproveQuestion}
         question={selectedApproveQuestion}
+        sections={sections}
+      />
+
+      <RejectQuestionModal
+        isOpen={isRejectModalOpen}
+        onClose={() => {
+          setIsRejectModalOpen(false);
+          setSelectedRejectQuestion(null);
+        }}
+        onReject={submitRejectQuestion}
+        question={selectedRejectQuestion}
       />
     </div>
   );

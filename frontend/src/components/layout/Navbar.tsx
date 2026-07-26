@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { BookOpen, LogOut, Settings, User } from 'lucide-react';
+import { LogOut, Settings, User } from 'lucide-react';
 import api from '../../api/axios';
+import { Logo } from '../ui/Logo';
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuthStore();
@@ -27,12 +28,11 @@ const Navbar = () => {
             <>
               <Link to="/" className="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity px-3 py-2">Home</Link>
               <Link to="/faqs" className="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity px-3 py-2">FAQs</Link>
-              <Link to="/aqs" className="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity px-3 py-2">AQs</Link>
             </>
           ) : (
             <Link to="/" className="flex items-center gap-2 group px-2">
               <div className="bg-bg-aqua p-1.5 rounded-full">
-                <BookOpen className="text-white w-4 h-4" />
+                <Logo className="w-4 h-4" />
               </div>
               <span className="font-semibold tracking-tight">V FAQ</span>
             </Link>
@@ -44,7 +44,7 @@ const Navbar = () => {
           <div className="hidden sm:flex absolute left-1/2 -translate-x-1/2 items-center">
             <Link to="/" className="flex items-center gap-2 group">
               <div className="bg-bg-aqua p-1.5 rounded-full group-hover:scale-105 transition-transform">
-                <BookOpen className="text-white w-4 h-4" />
+                <Logo className="w-4 h-4" />
               </div>
               <span className="font-semibold tracking-tight">V FAQ</span>
             </Link>

@@ -72,12 +72,14 @@ const Accordion: React.FC<AccordionProps> = ({ faq, type = 'FAQ' }) => {
       </button>
       
       <div 
-        className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}
       >
-        <div 
-          className="px-6 pb-4 pt-2 text-text-secondary text-base leading-relaxed max-w-none prose prose-p:text-text-secondary prose-a:text-text-aqua"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(faq.answer) }}
-        />
+        {(isOpen || hasViewed) && (
+          <div 
+            className="px-6 pb-4 pt-2 text-text-secondary text-base leading-relaxed max-w-none prose prose-p:text-text-secondary prose-a:text-text-aqua"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(faq.answer) }}
+          />
+        )}
         
         {/* Voting Section */}
         <div className="px-6 pb-6 pt-4 flex items-center gap-4 text-sm font-medium text-text-tertiary border-t border-border-primary mx-6">

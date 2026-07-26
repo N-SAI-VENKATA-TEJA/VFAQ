@@ -3,6 +3,7 @@ import { Search } from 'lucide-react';
 import api from '../api/axios';
 import Accordion from '../components/ui/Accordion';
 import { useAuthStore } from '../store/authStore';
+import Chatbot from '../components/ui/Chatbot';
 
 interface FAQ {
   _id: string;
@@ -71,7 +72,8 @@ const FAQPage = () => {
   }, [filteredFaqs]);
 
   return (
-    <div className="w-full max-w-[70.5rem] mx-auto space-y-12 animate-fade-up">
+    <>
+      <div className="w-full max-w-[70.5rem] mx-auto space-y-12 animate-fade-up">
       <div className="text-center mb-16 pt-10">
         <h1 className="text-5xl md:text-6xl font-medium tracking-tight-xl text-text-primary mb-4">Frequently Asked Questions</h1>
         <p className="text-lg text-text-secondary mb-10">Find answers to common questions about the internship.</p>
@@ -183,8 +185,9 @@ const FAQPage = () => {
           )}
         </div>
       )}
-
-    </div>
+      </div>
+      <Chatbot />
+    </>
   );
 };
 

@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IVote extends Document {
   targetId: mongoose.Types.ObjectId;
-  targetType: 'FAQ' | 'AQ';
+  targetType: 'FAQ';
   userIdOrIpHash: string;
   voteType: 'helpful' | 'unhelpful' | 'ask';
   createdAt: Date;
@@ -11,7 +11,7 @@ export interface IVote extends Document {
 const voteSchema = new Schema<IVote>(
   {
     targetId: { type: Schema.Types.ObjectId, required: true, refPath: 'targetType' },
-    targetType: { type: String, enum: ['FAQ', 'AQ'], required: true, default: 'FAQ' },
+    targetType: { type: String, enum: ['FAQ'], required: true, default: 'FAQ' },
     userIdOrIpHash: { type: String, required: true },
     voteType: { type: String, enum: ['helpful', 'unhelpful', 'ask'], required: true },
   },

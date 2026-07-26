@@ -7,6 +7,7 @@ export interface ISubmittedQuestion extends Document {
   submitterEmail?: string;
   status: 'pending' | 'approved' | 'rejected';
   aiGeneratedAnswer?: string;
+  rejectReason?: string;
   createdAt: Date;
 }
 
@@ -22,6 +23,7 @@ const submittedQuestionSchema = new Schema<ISubmittedQuestion>(
       default: 'pending',
     },
     aiGeneratedAnswer: { type: String },
+    rejectReason: { type: String },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

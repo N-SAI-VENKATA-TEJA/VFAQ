@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuthStore } from '../store/authStore';
-import { BookOpen } from 'lucide-react';
+import { Logo } from '../components/ui/Logo';
 
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState<'student' | 'admin'>('student');
@@ -30,6 +30,9 @@ const AuthPage = () => {
         // Validation: Prevent normal users from logging in via Admin tab, and vice versa
         if (activeTab === 'admin' && userData.role !== 'admin') {
           throw new Error("Unauthorized access. Admin privileges required.");
+        }
+        if (activeTab === 'student' && userData.role === 'admin') {
+          throw new Error("Please use the Admin tab to log in to your administrator account.");
         }
         
         login(userData);
@@ -59,8 +62,8 @@ const AuthPage = () => {
     <div className="min-h-screen bg-bg-primary flex flex-col items-center justify-center py-12 px-4 relative">
       {/* Brand Header */}
       <div className="w-full max-w-[65rem] mb-6 flex items-center justify-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-brand-aqua-20 text-brand-aqua flex items-center justify-center">
-          <BookOpen className="w-5 h-5" />
+        <div className="w-8 h-8 rounded-full bg-brand-aqua-20 text-brand-aqua flex items-center justify-center p-1 overflow-hidden">
+          <Logo className="w-full h-full" />
         </div>
         <h1 className="text-2xl font-medium tracking-tight-xl text-text-primary">Vicharanashala FAQ Portal</h1>
       </div>
@@ -73,8 +76,8 @@ const AuthPage = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-brand-aqua to-sky-600 opacity-90 z-0"></div>
           
           <div className="relative z-10 text-center flex flex-col items-center">
-             <div className="w-20 h-20 bg-brand-white rounded-full flex items-center justify-center mb-8 shadow-xl">
-               <BookOpen className="w-10 h-10 text-brand-aqua" />
+             <div className="w-16 h-16 bg-brand-white rounded-full flex items-center justify-center mb-8 shadow-xl p-2 overflow-hidden">
+               <Logo className="w-full h-full" />
              </div>
              <h2 className="text-4xl font-medium tracking-tight-xl mb-4 leading-tight text-brand-white">Vicharanashala<br/>Knowledge Base</h2>
              <p className="text-brand-white/80 text-lg">Discover, ask, and learn from the community's questions.</p>

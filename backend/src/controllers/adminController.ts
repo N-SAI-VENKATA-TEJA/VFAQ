@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { FAQ } from '../models/FAQ';
 import { SubmittedQuestion } from '../models/SubmittedQuestion';
 import { Vote } from '../models/Vote';
+import { addDocumentToRAG } from '../services/ragService';
 
 // GET /api/admin/faqs
 export const getAllFaqs = async (req: Request, res: Response): Promise<void> => {
@@ -16,8 +17,19 @@ export const getAllFaqs = async (req: Request, res: Response): Promise<void> => 
 // POST /api/admin/faqs
 export const createFaq = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { section, sectionNumber, question, answer, tags, slug, isPublished } = req.body;
+    const { section, question, answer, tags, slug, isPublished } = req.body;
+    let { sectionNumber } = req.body;
     
+    if (section && !sectionNumber) {
+      const existingFaqInSection = await FAQ.findOne({ section: new RegExp('^' + section + '$', 'i') });
+      if (existingFaqInSection) {
+        sectionNumber = existingFaqInSection.sectionNumber;
+      } else {
+        const lastFaq = await FAQ.findOne().sort({ sectionNumber: -1 });
+        sectionNumber = lastFaq ? lastFaq.sectionNumber + 1 : 1;
+      }
+    }
+
     // Auto-generate slug if not provided
     const faqSlug = slug || question.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
@@ -31,6 +43,10 @@ export const createFaq = async (req: Request, res: Response): Promise<void> => {
       isPublished: isPublished !== undefined ? isPublished : false,
     });
 
+    if (faq.isPublished) {
+      await addDocumentToRAG(faq);
+    }
+
     res.status(201).json(faq);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -40,7 +56,19 @@ export const createFaq = async (req: Request, res: Response): Promise<void> => {
 // PUT /api/admin/faqs/:id
 export const updateFaq = async (req: Request, res: Response): Promise<void> => {
   try {
-    const faq = await FAQ.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updateData = { ...req.body };
+    
+    if (updateData.section && !updateData.sectionNumber) {
+      const existingFaqInSection = await FAQ.findOne({ section: new RegExp('^' + updateData.section + '$', 'i') });
+      if (existingFaqInSection) {
+        updateData.sectionNumber = existingFaqInSection.sectionNumber;
+      } else {
+        const lastFaq = await FAQ.findOne().sort({ sectionNumber: -1 });
+        updateData.sectionNumber = lastFaq ? lastFaq.sectionNumber + 1 : 1;
+      }
+    }
+
+    const faq = await FAQ.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!faq) {
       res.status(404).json({ message: 'FAQ not found' });
       return;
@@ -77,12 +105,11 @@ export const getSubmittedQuestions = async (req: Request, res: Response): Promis
   }
 };
 
-import { AQ } from '../models/AQ';
 
 // PATCH /api/admin/questions/:id
 export const updateSubmittedQuestion = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { status, aiGeneratedAnswer, answer, section, sectionNumber, tags } = req.body;
+    const { status, aiGeneratedAnswer, answer, section, tags, rejectReason } = req.body;
     const question = await SubmittedQuestion.findById(req.params.id);
     
     if (!question) {
@@ -92,22 +119,38 @@ export const updateSubmittedQuestion = async (req: Request, res: Response): Prom
 
     if (status) question.status = status;
     if (aiGeneratedAnswer) question.aiGeneratedAnswer = aiGeneratedAnswer;
+    if (rejectReason && status === 'rejected') question.rejectReason = rejectReason;
     
     await question.save();
 
-    // If status is approved, automatically create an AQ
-    if (status === 'approved') {
-      const aqSlug = question.question.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now();
-      await AQ.create({
-        section: section || question.category,
-        sectionNumber: sectionNumber || 99, // default unassigned section number
+    // If status is approved, create an FAQ directly
+    if (status === 'approved' && answer && section) {
+      let secNum = 1;
+      // Try to find an existing FAQ in this section to copy its sectionNumber
+      const existingFaqInSection = await FAQ.findOne({ section: new RegExp('^' + section + '$', 'i') });
+      if (existingFaqInSection) {
+        secNum = existingFaqInSection.sectionNumber;
+      } else {
+        // If it's a new section, find the maximum section number and add 1
+        const lastFaq = await FAQ.findOne().sort({ sectionNumber: -1 });
+        if (lastFaq) {
+          secNum = lastFaq.sectionNumber + 1;
+        }
+      }
+
+      const faqSlug = question.question.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+      const newFaq = await FAQ.create({
+        section,
+        sectionNumber: secNum,
         question: question.question,
-        answer: answer || question.aiGeneratedAnswer || 'Pending community or admin answer.',
-        slug: aqSlug,
+        answer,
         tags: tags || [],
-        askedCount: 1,
-        isPublished: true
+        slug: faqSlug,
+        isPublished: true, // Automatically publish approved questions
       });
+
+      await addDocumentToRAG(newFaq);
     }
 
     res.json(question);

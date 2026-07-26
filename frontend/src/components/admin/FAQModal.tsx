@@ -16,38 +16,52 @@ interface FAQModalProps {
   onClose: () => void;
   onSave: (faq: Partial<FAQ>) => Promise<void>;
   faq: FAQ | null;
+  sections: string[];
 }
 
-const FAQModal: React.FC<FAQModalProps> = ({ isOpen, onClose, onSave, faq }) => {
+const FAQModal: React.FC<FAQModalProps> = ({ isOpen, onClose, onSave, faq, sections }) => {
   const [formData, setFormData] = useState<Partial<FAQ>>({
     section: '',
-    sectionNumber: 1,
     question: '',
     answer: '',
     isPublished: true,
   });
+  const [isNewSection, setIsNewSection] = useState(false);
+  const [newSectionName, setNewSectionName] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (faq) {
       setFormData(faq);
+      setIsNewSection(false);
+      setNewSectionName(faq.section && !sections.includes(faq.section) ? faq.section : '');
     } else {
       setFormData({
         section: '',
-        sectionNumber: 1,
         question: '',
         answer: '',
         isPublished: true,
       });
+      setIsNewSection(false);
+      setNewSectionName('');
     }
-  }, [faq, isOpen]);
+  }, [faq, isOpen, sections]);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const finalSection = isNewSection ? newSectionName : formData.section;
+    
+    if (!finalSection) {
+      alert("Please select or enter a section name.");
+      return;
+    }
+
     setLoading(true);
-    await onSave(formData);
+    // Submit without sectionNumber, let the backend calculate it if needed
+    const { sectionNumber, ...dataToSubmit } = formData;
+    await onSave({ ...dataToSubmit, section: finalSection });
     setLoading(false);
     onClose();
   };
@@ -65,27 +79,43 @@ const FAQModal: React.FC<FAQModalProps> = ({ isOpen, onClose, onSave, faq }) => 
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-text-primary ml-4">Section Number</label>
-              <input 
-                type="number"
-                required
-                value={formData.sectionNumber || ''}
-                onChange={(e) => setFormData({ ...formData, sectionNumber: parseInt(e.target.value) })}
-                className="block w-full px-6 py-3 min-h-[3.5rem] rounded-pill bg-brand-white border border-brand-gray-light shadow-input-inner focus:outline-none focus:border-border-secondary transition-colors text-text-primary text-base placeholder-[#8C8C9A]"
-              />
-            </div>
+          <div className="grid grid-cols-1 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-medium text-text-primary ml-4">Section Name</label>
-              <input 
-                type="text"
-                required
-                value={formData.section || ''}
-                onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-                className="block w-full px-6 py-3 min-h-[3.5rem] rounded-pill bg-brand-white border border-brand-gray-light shadow-input-inner focus:outline-none focus:border-border-secondary transition-colors text-text-primary text-base placeholder-[#8C8C9A]"
-              />
+              <select 
+                required={!isNewSection}
+                value={isNewSection ? 'new' : formData.section || ''}
+                onChange={(e) => {
+                  if (e.target.value === 'new') {
+                    setIsNewSection(true);
+                  } else {
+                    setIsNewSection(false);
+                    setFormData({ ...formData, section: e.target.value });
+                  }
+                }}
+                className="block w-full px-6 py-3 min-h-[3.5rem] rounded-pill bg-brand-white border border-brand-gray-light shadow-input-inner focus:outline-none focus:border-border-secondary transition-colors text-text-primary text-base cursor-pointer"
+              >
+                <option value="" disabled>Select a section...</option>
+                {sections.map(sec => (
+                  <option key={sec} value={sec}>{sec}</option>
+                ))}
+                <option value="new" className="font-semibold text-brand-aqua">+ Create New Section</option>
+              </select>
             </div>
+            
+            {isNewSection && (
+              <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                <label className="text-sm font-medium text-text-primary ml-4">New Section Name</label>
+                <input 
+                  type="text"
+                  required
+                  value={newSectionName}
+                  onChange={(e) => setNewSectionName(e.target.value)}
+                  placeholder="e.g. Intern Onboarding"
+                  className="block w-full px-6 py-3 min-h-[3.5rem] rounded-pill bg-brand-white border border-brand-gray-light shadow-input-inner focus:outline-none focus:border-border-secondary transition-colors text-text-primary text-base placeholder-[#8C8C9A]"
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

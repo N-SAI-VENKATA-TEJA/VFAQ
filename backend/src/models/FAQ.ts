@@ -12,6 +12,7 @@ export interface IFAQ extends Document {
   unhelpfulVotes: number;
   isPublished: boolean;
   isDeleted: boolean;
+  embedding?: number[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,6 +30,7 @@ const faqSchema = new Schema<IFAQ>(
     unhelpfulVotes: { type: Number, default: 0 },
     isPublished: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
+    embedding: { type: [Number], required: false },
   },
   { timestamps: true }
 );

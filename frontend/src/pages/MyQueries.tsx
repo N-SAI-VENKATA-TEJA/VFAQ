@@ -82,9 +82,6 @@ const MyQueries = () => {
               <div key={query._id} className="p-8 rounded-card bg-brand-white border border-brand-gray-light shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
                   <div className="flex-1">
-                    <span className="inline-block px-4 py-1.5 rounded-pill bg-bg-secondary border border-border-primary text-text-primary text-[10px] font-semibold uppercase tracking-badge mb-4 shadow-sm">
-                      {query.category}
-                    </span>
                     <h3 className="text-2xl font-medium tracking-tight-xl text-text-primary leading-tight">{query.question}</h3>
                     <p className="text-sm text-text-tertiary mt-3">Submitted on {new Date(query.createdAt).toLocaleDateString()}</p>
                   </div>

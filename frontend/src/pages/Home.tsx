@@ -37,13 +37,7 @@ const Home = () => {
               <Search className="w-5 h-5" />
               Browse FAQs
             </Link>
-            <Link 
-              to="/aqs" 
-              className="flex-1 inline-flex justify-center items-center gap-2 px-6 py-4 rounded-pill bg-brand-white text-text-primary font-medium text-base hover:scale-95 transition-transform duration-300 shadow-button-primary"
-            >
-              <MessageCircleQuestion className="w-5 h-5 text-brand-aqua" />
-              Browse AQs
-            </Link>
+
             <Link 
               to="/my-queries" 
               className="flex-1 inline-flex justify-center items-center gap-2 px-6 py-4 rounded-pill bg-brand-white text-text-primary font-medium text-base hover:bg-bg-tertiary hover:text-text-white transition-colors duration-300 shadow-button-primary group"
@@ -83,11 +77,7 @@ const Home = () => {
             title="Searchable FAQs"
             description="Instantly find official answers curated by the administration, organized perfectly by category."
           />
-          <FeatureCard 
-            icon={<Users className="w-6 h-6 text-brand-aqua" />}
-            title="Community Asked Questions (AQs)"
-            description="Browse and learn from questions asked by other students. Upvote the ones you care about."
-          />
+
           <FeatureCard 
             icon={<ShieldCheck className="w-6 h-6 text-brand-aqua" />}
             title="Verified Admin Moderation"
@@ -97,6 +87,11 @@ const Home = () => {
             icon={<Zap className="w-6 h-6 text-brand-aqua" />}
             title="AI-Powered Suggestions"
             description="Submit a query and immediately receive an AI-generated suggested answer while you wait for admin review."
+          />
+          <FeatureCard 
+            icon={<MessageCircleQuestion className="w-6 h-6 text-brand-aqua" />}
+            title="Direct Query Submission"
+            description="Can't find what you're looking for? Submit your own unique questions directly to our moderation team."
           />
         </div>
       </section>

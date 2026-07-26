@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen } from 'lucide-react';
+import { Logo } from '../ui/Logo';
 
 const Footer = () => {
   return (
@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="md:col-span-1">
           <Link to="/" className="flex items-center gap-2 group mb-6">
             <div className="bg-bg-aqua p-1.5 rounded-full">
-              <BookOpen className="text-white w-4 h-4" />
+              <Logo className="w-4 h-4" />
             </div>
             <span className="font-semibold tracking-tight text-text-primary">V FAQ</span>
           </Link>
@@ -27,7 +27,6 @@ const Footer = () => {
           <h4 className="text-sm font-semibold tracking-badge uppercase text-text-primary mb-6">Resources</h4>
           <ul className="space-y-4">
             <li><Link to="/faqs" className="text-sm text-text-secondary hover:text-text-aqua transition-colors">Official FAQs</Link></li>
-            <li><Link to="/aqs" className="text-sm text-text-secondary hover:text-text-aqua transition-colors">Community AQs</Link></li>
             <li><Link to="/my-queries" className="text-sm text-text-secondary hover:text-text-aqua transition-colors">Submit a Query</Link></li>
           </ul>
         </div>

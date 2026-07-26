@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import FAQPage from './pages/FAQPage';
-import AQPage from './pages/AQPage';
 import AuthPage from './pages/AuthPage';
 import MyQueries from './pages/MyQueries';
 import AdminDashboard from './pages/AdminDashboard';
@@ -80,14 +79,7 @@ function App() {
               </RequireAuth>
             } 
           />
-          <Route 
-            path="aqs" 
-            element={
-              <RequireAuth>
-                <AQPage />
-              </RequireAuth>
-            } 
-          />
+
           <Route 
             path="my-queries" 
             element={

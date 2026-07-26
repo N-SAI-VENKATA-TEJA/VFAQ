@@ -15,33 +15,44 @@ interface ApproveQuestionModalProps {
   onClose: () => void;
   onApprove: (id: string, data: any) => void;
   question: PendingQuestion | null;
+  sections: string[];
 }
 
-const ApproveQuestionModal: React.FC<ApproveQuestionModalProps> = ({ isOpen, onClose, onApprove, question }) => {
+const ApproveQuestionModal: React.FC<ApproveQuestionModalProps> = ({ isOpen, onClose, onApprove, question, sections }) => {
   const [formData, setFormData] = useState({
     answer: '',
     section: '',
-    sectionNumber: 99,
     tags: '',
   });
+  const [isNewSection, setIsNewSection] = useState(false);
+  const [newSectionName, setNewSectionName] = useState('');
 
   useEffect(() => {
     if (question) {
       setFormData({
         answer: '',
-        section: question.category || '',
-        sectionNumber: 99,
+        section: question.category && sections.includes(question.category) ? question.category : '',
         tags: '',
       });
+      setIsNewSection(false);
+      setNewSectionName(question.category && !sections.includes(question.category) ? question.category : '');
     }
-  }, [question]);
+  }, [question, sections]);
 
   if (!isOpen || !question) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const finalSection = isNewSection ? newSectionName : formData.section;
+    
+    if (!finalSection) {
+      alert("Please select or enter a section.");
+      return;
+    }
+
     onApprove(question._id, {
       ...formData,
+      section: finalSection,
       tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
     });
   };
@@ -51,7 +62,7 @@ const ApproveQuestionModal: React.FC<ApproveQuestionModalProps> = ({ isOpen, onC
       <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-white/60 animate-in slide-in-from-bottom-8 duration-300">
         <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-emerald-50/50">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">Approve Question & Create AQ</h2>
+            <h2 className="text-xl font-bold text-gray-800">Approve Question & Create FAQ</h2>
             <p className="text-sm text-gray-500 mt-1">Provide an answer before publishing to the community.</p>
           </div>
           <button 
@@ -85,28 +96,43 @@ const ApproveQuestionModal: React.FC<ApproveQuestionModalProps> = ({ isOpen, onC
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Category (Section)</label>
-              <input
-                type="text"
-                required
-                value={formData.section}
-                onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-              />
+              <select
+                required={!isNewSection}
+                value={isNewSection ? 'new' : formData.section}
+                onChange={(e) => {
+                  if (e.target.value === 'new') {
+                    setIsNewSection(true);
+                  } else {
+                    setIsNewSection(false);
+                    setFormData({ ...formData, section: e.target.value });
+                  }
+                }}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all bg-white"
+              >
+                <option value="" disabled>Select a section...</option>
+                {sections.map(sec => (
+                  <option key={sec} value={sec}>{sec}</option>
+                ))}
+                <option value="new" className="font-semibold text-emerald-600">+ Create New Section</option>
+              </select>
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Section Number</label>
-              <input
-                type="number"
-                step="0.1"
-                required
-                value={formData.sectionNumber}
-                onChange={(e) => setFormData({ ...formData, sectionNumber: parseFloat(e.target.value) })}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-              />
-            </div>
+            
+            {isNewSection && (
+              <div className="animate-in fade-in slide-in-from-top-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">New Section Name</label>
+                <input
+                  type="text"
+                  required
+                  value={newSectionName}
+                  onChange={(e) => setNewSectionName(e.target.value)}
+                  placeholder="e.g. Intern Onboarding"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                />
+              </div>
+            )}
           </div>
 
           <div>
@@ -132,7 +158,7 @@ const ApproveQuestionModal: React.FC<ApproveQuestionModalProps> = ({ isOpen, onC
               type="submit"
               className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-emerald-200 hover:-translate-y-0.5 transition-all flex items-center gap-2"
             >
-              <Check className="w-4 h-4" /> Publish as AQ
+              <Check className="w-4 h-4" /> Publish to FAQs
             </button>
           </div>
         </form>

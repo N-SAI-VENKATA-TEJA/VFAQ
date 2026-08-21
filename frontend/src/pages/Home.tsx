@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Search, MessageCircleQuestion, Zap, ShieldCheck, Users } from 'lucide-react';
+import { Search, MessageCircleQuestion, Zap, ShieldCheck } from 'lucide-react';
 
 const Home = () => {
   return (

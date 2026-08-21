@@ -108,8 +108,8 @@ export const generateAnswer = async (question: string) => {
   `);
 
   const combineDocsChain = await createStuffDocumentsChain({
-    llm,
-    prompt,
+    llm: llm as any,
+    prompt: prompt as any,
   });
 
   try {
@@ -118,8 +118,8 @@ export const generateAnswer = async (question: string) => {
       const retriever = vectorStore.asRetriever({ k: 4 }); // Retrieve top 4 most relevant FAQs
 
       const retrievalChain = await createRetrievalChain({
-        retriever,
-        combineDocsChain,
+        retriever: retriever as any,
+        combineDocsChain: combineDocsChain as any,
       });
 
       const response = await retrievalChain.invoke({

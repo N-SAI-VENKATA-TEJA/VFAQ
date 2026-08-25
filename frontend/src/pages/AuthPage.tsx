@@ -122,6 +122,15 @@ const AuthPage = () => {
                 ? 'Sign in to access the admin dashboard.' 
                 : (isLogin ? 'Sign in to access FAQs.' : 'Sign up to ask questions and explore.')}
             </p>
+            {activeTab === 'admin' && (
+              <div className="mt-6 p-4 rounded-xl bg-brand-aqua-20 border border-brand-aqua-50 text-sm text-center animate-fade-up">
+                <span className="font-semibold text-text-primary block mb-1">👋 Reviewing my application?</span>
+                <span className="text-text-secondary">
+                  Email: <strong className="text-text-aqua font-medium">admin@vicharanashala.ai</strong> <br/>
+                  Password: <strong className="text-text-aqua font-medium">Admin@1234</strong>
+                </span>
+              </div>
+            )}
           </div>
           
           {error && (

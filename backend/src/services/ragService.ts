@@ -24,8 +24,9 @@ export const initRAG = async () => {
 
     llm = new ChatGoogleGenerativeAI({
       apiKey: process.env.GEMINI_API_KEY,
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash',
       temperature: 0,
+      maxRetries: 0,      // Fail immediately instead of retrying for minutes
     });
 
     // Fetch all published FAQs
@@ -132,15 +133,18 @@ export const generateAnswer = async (question: string) => {
     console.warn('Vector store retrieval failed (likely rate limit), falling back to text search:', error.message);
   }
 
-  // Fallback: MongoDB Regex Search
+  // ── Fallback: MongoDB text search (NO LLM call — instant response) ──────────
+  // When the LLM / Gemini API is unavailable we skip the AI layer entirely and
+  // return the best-matching FAQ answer directly from the database.
   console.log('Using MongoDB fallback search for question:', question);
-  // Extract keywords from the question (words longer than 3 characters)
-  const keywords = question.split(/\\s+/).filter(w => w.length > 3).map(w => w.replace(/[^a-zA-Z0-9]/g, ''));
-  
-  let fallbackDocs: Document[] = [];
+
+  // Fix: use /\s+/ (single backslash) so whitespace splitting actually works
+  const keywords = question.split(/\s+/).filter((w: string) => w.length > 3).map((w: string) => w.replace(/[^a-zA-Z0-9]/g, ''));
+
+  let matchedFaqs: any[] = [];
   if (keywords.length > 0) {
     const regexPattern = keywords.join('|');
-    const faqs = await FAQ.find({
+    matchedFaqs = await FAQ.find({
       isDeleted: false,
       isPublished: true,
       $or: [
@@ -148,27 +152,26 @@ export const generateAnswer = async (question: string) => {
         { answer: new RegExp(regexPattern, 'i') },
         { section: new RegExp(regexPattern, 'i') }
       ]
-    }).limit(5);
-
-    fallbackDocs = faqs.map(faq => new Document({
-      pageContent: `Section: ${faq.section}\nQuestion: ${faq.question}\nAnswer: ${faq.answer}`,
-      metadata: { section: faq.section, id: faq._id.toString() }
-    }));
+    }).limit(3);
   }
 
-  // If no docs found, try to just fetch the latest FAQs to provide some context, or empty
-  if (fallbackDocs.length === 0) {
-    const faqs = await FAQ.find({ isDeleted: false, isPublished: true }).limit(3);
-    fallbackDocs = faqs.map(faq => new Document({
-      pageContent: `Section: ${faq.section}\nQuestion: ${faq.question}\nAnswer: ${faq.answer}`,
-      metadata: { section: faq.section, id: faq._id.toString() }
-    }));
+  if (matchedFaqs.length > 0) {
+    // Return the top match directly — no LLM needed
+    const best = matchedFaqs[0];
+    const extras = matchedFaqs.slice(1)
+      .map((f: any) => `• ${f.question}`)
+      .join('\n');
+
+    return (
+      `Here's what I found in our FAQ:\n\n` +
+      `**${best.question}**\n${best.answer}` +
+      (extras ? `\n\nRelated questions you might find helpful:\n${extras}` : '')
+    );
   }
 
-  const response = await combineDocsChain.invoke({
-    input: question,
-    context: fallbackDocs,
-  });
-
-  return response;
+  // Nothing matched — guide the user to submit a query
+  return (
+    "I'm sorry, I couldn't find an answer to your question in our FAQ database. " +
+    "Please try rephrasing your question, or use the **Submit a Query** form to send it directly to the admin team."
+  );
 };

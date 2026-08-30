@@ -24,7 +24,7 @@ export const initRAG = async () => {
 
     llm = new ChatGoogleGenerativeAI({
       apiKey: process.env.GEMINI_API_KEY,
-      model: 'gemini-1.5-flash',
+      model: 'gemini-3.5-flash-lite',
       temperature: 0,
       maxRetries: 0,      // Fail immediately instead of retrying for minutes
     });
